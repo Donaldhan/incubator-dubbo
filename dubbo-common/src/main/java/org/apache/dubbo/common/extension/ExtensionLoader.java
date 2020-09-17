@@ -46,10 +46,14 @@ import java.util.regex.Pattern;
 
 /**
  * Load dubbo extensions
+ * 加载dubbo 拓展
  * <ul>
  * <li>auto inject dependency extension </li>
+ * 自动注入依赖拓展
  * <li>auto wrap extension in wrapper </li>
+ * 自动包装拓展
  * <li>default extension is an adaptive instance</li>
+ * 默认拓展为一个适配器实例
  * </ul>
  *
  * @see <a href="http://java.sun.com/j2se/1.5.0/docs/guide/jar/jar.html#Service%20Provider">Service Provider in Java 5</a>
@@ -103,6 +107,12 @@ public class ExtensionLoader<T> {
         return type.isAnnotationPresent(SPI.class);
     }
 
+    /**
+     * 获取给定类型的拓展加载器
+     * @param type
+     * @param <T>
+     * @return
+     */
     @SuppressWarnings("unchecked")
     public static <T> ExtensionLoader<T> getExtensionLoader(Class<T> type) {
         if (type == null) {
@@ -305,6 +315,7 @@ public class ExtensionLoader<T> {
 
     /**
      * Return the list of extensions which are already loaded.
+     * 返回所有已经加载的拓展类
      * <p>
      * Usually {@link #getSupportedExtensions()} should be called in order to get all extensions.
      *

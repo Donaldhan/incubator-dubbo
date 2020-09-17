@@ -30,14 +30,23 @@ public interface RegistryFactory {
 
     /**
      * Connect to the registry
+     * 连接注册器
      * <p>
      * Connecting the registry needs to support the contract: <br>
+     *     连接注册器，需要支持一下约束
      * 1. When the check=false is set, the connection is not checked, otherwise the exception is thrown when disconnection <br>
+     *     当失去连接是，如果check为false，则不会检查连接，否则将会抛出异常
      * 2. Support username:password authority authentication on URL.<br>
+     *     支持账号密码验证
+     *
      * 3. Support the backup=10.20.153.10 candidate registry cluster address.<br>
+     *     支持候选注册器
      * 4. Support file=registry.cache local disk file cache.<br>
+     *     支持本地磁盘文件缓存
      * 5. Support the timeout=1000 request timeout setting.<br>
+     *     支持请求超时时间设置
      * 6. Support session=60000 session timeout or expiration settings.<br>
+     *     支持会话超时时间设置
      *
      * @param url Registry address, is not allowed to be empty
      * @return Registry reference, never return empty value

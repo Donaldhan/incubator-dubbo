@@ -28,19 +28,22 @@ public interface Protocol {
 
     /**
      * Get default port when user doesn't config the port.
-     *
+     * 默认端口
      * @return default port
      */
     int getDefaultPort();
 
     /**
      * Export service for remote invocation: <br>
+     *     为远程调用，暴露服务
      * 1. Protocol should record request source address after receive a request:
      * RpcContext.getContext().setRemoteAddress();<br>
+     *     在接受一个请求后，协议应该记录请求源的地址
      * 2. export() must be idempotent, that is, there's no difference between invoking once and invoking twice when
      * export the same URL<br>
+     *     此方法必须是幂等的，
      * 3. Invoker instance is passed in by the framework, protocol needs not to care <br>
-     *
+     * 调用者，通过框架传递，协议不需要care
      * @param <T>     Service type
      * @param invoker Service invoker
      * @return exporter reference for exported service, useful for unexport the service later
@@ -51,13 +54,16 @@ public interface Protocol {
 
     /**
      * Refer a remote service: <br>
+     *     引用一个远端的服务
      * 1. When user calls `invoke()` method of `Invoker` object which's returned from `refer()` call, the protocol
      * needs to correspondingly execute `invoke()` method of `Invoker` object <br>
+     *     当从refer返回的调用者，调用invoke方法时，此协议需要相应地执行调用这的invoke方法；
      * 2. It's protocol's responsibility to implement `Invoker` which's returned from `refer()`. Generally speaking,
      * protocol sends remote request in the `Invoker` implementation. <br>
+     *     协议需要实现从refer返回来的调用者。或者说，协议发送调用者实现的远端请求
      * 3. When there's check=false set in URL, the implementation must not throw exception but try to recover when
      * connection fails.
-     *
+     *  当check为false，连接失败时，相应的实现，不应该抛出异常，应该尝试恢复
      * @param <T>  Service type
      * @param type Service class
      * @param url  URL address for the remote service
@@ -69,9 +75,15 @@ public interface Protocol {
 
     /**
      * Destroy protocol: <br>
+     *     销毁协议
      * 1. Cancel all services this protocol exports and refers <br>
+     *     取消协议暴露的所有exports和refere
      * 2. Release all occupied resources, for example: connection, port, etc. <br>
+     *     释放所有暂用的资源，连接，端口
      * 3. Protocol can continue to export and refer new service even after it's destroyed.
+     * 在协议销毁后，协议可以继续暴露或引用服务
+     *
+     *
      */
     void destroy();
 

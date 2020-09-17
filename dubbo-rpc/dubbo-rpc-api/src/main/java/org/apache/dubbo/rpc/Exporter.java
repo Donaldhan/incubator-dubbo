@@ -27,13 +27,14 @@ public interface Exporter<T> {
 
     /**
      * get invoker.
-     *
+     * 获取调用这
      * @return invoker
      */
     Invoker<T> getInvoker();
 
     /**
      * unexport.
+     *
      * <p>
      * <code>
      * getInvoker().destroy();

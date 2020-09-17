@@ -29,6 +29,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * This is a singleton in order to ensure there is only one shutdown hook registered.
  * Because {@link ApplicationShutdownHooks} use {@link java.util.IdentityHashMap}
  * to store the shutdown hooks.
+ * dubbo shutdown hook
  */
 public class DubboShutdownHook extends Thread {
 
@@ -86,7 +87,7 @@ public class DubboShutdownHook extends Thread {
         if (!destroyed.compareAndSet(false, true)) {
             return;
         }
-        // destroy all the registries
+        // destroy all the registries 销毁所有注册器
         AbstractRegistryFactory.destroyAll();
         // destroy all the protocols
         destroyProtocols();
@@ -94,6 +95,7 @@ public class DubboShutdownHook extends Thread {
 
     /**
      * Destroy all the protocols.
+     * 销毁所有协议
      */
     private void destroyProtocols() {
         ExtensionLoader<Protocol> loader = ExtensionLoader.getExtensionLoader(Protocol.class);

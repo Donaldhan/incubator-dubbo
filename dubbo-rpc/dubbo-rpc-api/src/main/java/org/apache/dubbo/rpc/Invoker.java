@@ -29,14 +29,14 @@ public interface Invoker<T> extends Node {
 
     /**
      * get service interface.
-     *
+     * 获取服务
      * @return service interface.
      */
     Class<T> getInterface();
 
     /**
      * invoke.
-     *
+     * 调用服务
      * @param invocation
      * @return result
      * @throws RpcException

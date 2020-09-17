@@ -38,6 +38,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * URL - Uniform Resource Locator (Immutable, ThreadSafe)
+ * dubbo同一资源定位符
  * <p>
  * url example:
  * <ul>
@@ -72,6 +73,9 @@ public /**final**/ class URL implements Serializable {
 
     private static final long serialVersionUID = -1985165475234910535L;
 
+    /**
+     *
+     */
     private final String protocol;
 
     private final String username;
