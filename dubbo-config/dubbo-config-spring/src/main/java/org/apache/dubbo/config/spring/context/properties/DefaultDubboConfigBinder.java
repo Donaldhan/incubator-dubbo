@@ -39,6 +39,7 @@ public class DefaultDubboConfigBinder extends AbstractDubboConfigBinder {
         // Get properties under specified prefix from PropertySources
         Map<String, String> properties = getSubProperties(getPropertySources(), prefix);
         // Convert Map to MutablePropertyValues
+        //将Map转换为MutablePropertyValues
         MutablePropertyValues propertyValues = new MutablePropertyValues(properties);
         // Bind
         dataBinder.bind(propertyValues);

@@ -33,7 +33,7 @@ public abstract class AbstractDubboConfigBinder implements DubboConfigBinder {
 
     /**
      * Get multiple {@link PropertySource propertySources}
-     *
+     * 获取属性源
      * @return multiple {@link PropertySource propertySources}
      */
     protected Iterable<PropertySource<?>> getPropertySources() {

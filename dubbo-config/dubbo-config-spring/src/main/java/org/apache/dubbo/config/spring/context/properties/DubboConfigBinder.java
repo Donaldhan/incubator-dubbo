@@ -22,7 +22,7 @@ import org.springframework.context.EnvironmentAware;
 
 /**
  * {@link AbstractConfig DubboConfig} Binder
- *
+ * dubbo 配置绑定器
  * @see AbstractConfig
  * @see EnvironmentAware
  * @since 2.5.11
@@ -34,7 +34,8 @@ public interface DubboConfigBinder extends EnvironmentAware {
      * parameters that do not have corresponding fields in the target object.
      * <p>Default is "true". Turn this off to enforce that all bind parameters
      * must have a matching field in the target object.
-     *
+     * 设置是否忽略未知的字段，也就是说，是否忽略那些在目标对象，没有对应字段的绑定参数。
+     * 默认为true，打开开关，强制所有绑定的参数必须匹配目标对象中字段
      * @see #bind
      */
     void setIgnoreUnknownFields(boolean ignoreUnknownFields);
@@ -44,14 +45,15 @@ public interface DubboConfigBinder extends EnvironmentAware {
      * parameters that have corresponding fields in the target object which are
      * not accessible (for example because of null values in the nested path).
      * <p>Default is "false".
-     *
+     * 设置是否忽略无效的字段，也就是说，是否忽略那些在目标对象，没有对应字段的绑定参数，这些字段是不可访问，
+     * 比如为null
      * @see #bind
      */
     void setIgnoreInvalidFields(boolean ignoreInvalidFields);
 
     /**
      * Bind the properties to Dubbo Config Object under specified prefix.
-     *
+     * 绑定基于给定前缀的dubbo 配置对象的属性
      * @param prefix
      * @param dubboConfig
      */

@@ -35,7 +35,7 @@ public abstract class PropertySourcesUtils {
 
     /**
      * Get Sub {@link Properties}
-     *
+     * 从给定的属性元，获取给定前缀的属性
      * @param propertySources {@link PropertySource} Iterable
      * @param prefix          the prefix of property name
      * @return Map<String                                                                                                                                                                                                                                                               ,                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               String>
