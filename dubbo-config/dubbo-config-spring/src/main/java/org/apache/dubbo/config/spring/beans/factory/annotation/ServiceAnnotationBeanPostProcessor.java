@@ -76,12 +76,24 @@ public class ServiceAnnotationBeanPostProcessor implements BeanDefinitionRegistr
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
+    /**
+     * 需要扫描的包
+     */
     private final Set<String> packagesToScan;
 
+    /**
+     *
+     */
     private Environment environment;
 
+    /**
+     * 资源加载器
+     */
     private ResourceLoader resourceLoader;
 
+    /**
+     * 类加载器
+     */
     private ClassLoader classLoader;
 
     public ServiceAnnotationBeanPostProcessor(String... packagesToScan) {
@@ -98,7 +110,7 @@ public class ServiceAnnotationBeanPostProcessor implements BeanDefinitionRegistr
 
     @Override
     public void postProcessBeanDefinitionRegistry(BeanDefinitionRegistry registry) throws BeansException {
-
+        //解决环境变量的包扫描路径，针对包扫描参数中有占位符的场景
         Set<String> resolvedPackagesToScan = resolvePackagesToScan(packagesToScan);
 
         if (!CollectionUtils.isEmpty(resolvedPackagesToScan)) {
@@ -114,7 +126,7 @@ public class ServiceAnnotationBeanPostProcessor implements BeanDefinitionRegistr
 
     /**
      * Registers Beans whose classes was annotated {@link Service}
-     *
+     * 注册注解了Service的Bean
      * @param packagesToScan The base packages to scan
      * @param registry       {@link BeanDefinitionRegistry}
      */
@@ -367,6 +379,11 @@ public class ServiceAnnotationBeanPostProcessor implements BeanDefinitionRegistr
 
     }
 
+    /**
+     * 解决环境变量的包扫描路径，针对包扫描参数中有占位符的场景
+     * @param packagesToScan
+     * @return
+     */
     private Set<String> resolvePackagesToScan(Set<String> packagesToScan) {
         Set<String> resolvedPackagesToScan = new LinkedHashSet<String>(packagesToScan.size());
         for (String packageToScan : packagesToScan) {
