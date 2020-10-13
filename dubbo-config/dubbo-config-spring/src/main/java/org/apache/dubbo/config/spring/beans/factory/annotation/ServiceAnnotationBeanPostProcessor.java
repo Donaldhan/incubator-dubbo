@@ -114,6 +114,7 @@ public class ServiceAnnotationBeanPostProcessor implements BeanDefinitionRegistr
         Set<String> resolvedPackagesToScan = resolvePackagesToScan(packagesToScan);
 
         if (!CollectionUtils.isEmpty(resolvedPackagesToScan)) {
+            //注册service bean
             registerServiceBeans(resolvedPackagesToScan, registry);
         } else {
             if (logger.isWarnEnabled()) {
@@ -138,21 +139,22 @@ public class ServiceAnnotationBeanPostProcessor implements BeanDefinitionRegistr
         BeanNameGenerator beanNameGenerator = resolveBeanNameGenerator(registry);
 
         scanner.setBeanNameGenerator(beanNameGenerator);
-
+        //添加service注解过滤器
         scanner.addIncludeFilter(new AnnotationTypeFilter(Service.class));
 
         for (String packageToScan : packagesToScan) {
 
-            // Registers @Service Bean first
+            // Registers @Service Bean first， 包扫描
             scanner.scan(packageToScan);
 
-            // Finds all BeanDefinitionHolders of @Service whether @ComponentScan scans or not.
+            // Finds all BeanDefinitionHolders of @Service whether @ComponentScan scans or not. 获取Service注解bean
             Set<BeanDefinitionHolder> beanDefinitionHolders =
                     findServiceBeanDefinitionHolders(scanner, packageToScan, registry, beanNameGenerator);
 
             if (!CollectionUtils.isEmpty(beanDefinitionHolders)) {
 
                 for (BeanDefinitionHolder beanDefinitionHolder : beanDefinitionHolders) {
+                    //注册service bean
                     registerServiceBean(beanDefinitionHolder, registry, scanner);
                 }
 
@@ -218,7 +220,7 @@ public class ServiceAnnotationBeanPostProcessor implements BeanDefinitionRegistr
     /**
      * Finds a {@link Set} of {@link BeanDefinitionHolder BeanDefinitionHolders} whose bean type annotated
      * {@link Service} Annotation.
-     *
+     * 获取servie注解bean
      * @param scanner       {@link ClassPathBeanDefinitionScanner}
      * @param packageToScan package to scan
      * @param registry      {@link BeanDefinitionRegistry}
@@ -247,7 +249,7 @@ public class ServiceAnnotationBeanPostProcessor implements BeanDefinitionRegistr
 
     /**
      * Registers {@link ServiceBean} from new annotated {@link Service} {@link BeanDefinition}
-     *
+     * 注册Service bean
      * @param beanDefinitionHolder
      * @param registry
      * @param scanner
@@ -258,13 +260,13 @@ public class ServiceAnnotationBeanPostProcessor implements BeanDefinitionRegistr
                                      DubboClassPathBeanDefinitionScanner scanner) {
 
         Class<?> beanClass = resolveClass(beanDefinitionHolder);
-
+        //获取service注解
         Service service = findAnnotation(beanClass, Service.class);
 
         Class<?> interfaceClass = resolveServiceInterfaceClass(beanClass, service);
 
         String annotatedServiceBeanName = beanDefinitionHolder.getBeanName();
-
+        //构造service bean
         AbstractBeanDefinition serviceBeanDefinition =
                 buildServiceBeanDefinition(service, interfaceClass, annotatedServiceBeanName);
 
@@ -272,6 +274,7 @@ public class ServiceAnnotationBeanPostProcessor implements BeanDefinitionRegistr
         String beanName = generateServiceBeanName(service, interfaceClass, annotatedServiceBeanName);
 
         if (scanner.checkCandidate(beanName, serviceBeanDefinition)) { // check duplicated candidate bean
+            //注册bean
             registry.registerBeanDefinition(beanName, serviceBeanDefinition);
 
             if (logger.isWarnEnabled()) {
@@ -326,6 +329,11 @@ public class ServiceAnnotationBeanPostProcessor implements BeanDefinitionRegistr
 
     }
 
+    /**
+     * @param annotatedServiceBeanClass
+     * @param service
+     * @return
+     */
     private Class<?> resolveServiceInterfaceClass(Class<?> annotatedServiceBeanClass, Service service) {
 
         Class<?> interfaceClass = service.interfaceClass();
@@ -363,6 +371,10 @@ public class ServiceAnnotationBeanPostProcessor implements BeanDefinitionRegistr
         return interfaceClass;
     }
 
+    /**
+     * @param beanDefinitionHolder
+     * @return
+     */
     private Class<?> resolveClass(BeanDefinitionHolder beanDefinitionHolder) {
 
         BeanDefinition beanDefinition = beanDefinitionHolder.getBeanDefinition();
@@ -371,6 +383,10 @@ public class ServiceAnnotationBeanPostProcessor implements BeanDefinitionRegistr
 
     }
 
+    /**
+     * @param beanDefinition
+     * @return
+     */
     private Class<?> resolveClass(BeanDefinition beanDefinition) {
 
         String beanClassName = beanDefinition.getBeanClassName();
@@ -395,6 +411,13 @@ public class ServiceAnnotationBeanPostProcessor implements BeanDefinitionRegistr
         return resolvedPackagesToScan;
     }
 
+    /**
+     * 构造服务bean定义
+     * @param service
+     * @param interfaceClass
+     * @param annotatedServiceBeanName
+     * @return
+     */
     private AbstractBeanDefinition buildServiceBeanDefinition(Service service, Class<?> interfaceClass,
                                                               String annotatedServiceBeanName) {
 
