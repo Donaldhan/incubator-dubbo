@@ -110,7 +110,7 @@ public class ReferenceAnnotationBeanPostProcessor extends InstantiationAwareBean
 
     /**
      * Finds {@link InjectionMetadata.InjectedElement} Metadata from annotated {@link Reference @Reference} fields
-     *
+     * 字段级引用元信息
      * @param beanClass The {@link Class} of Bean
      * @return non-null {@link List}
      */
@@ -145,7 +145,7 @@ public class ReferenceAnnotationBeanPostProcessor extends InstantiationAwareBean
 
     /**
      * Finds {@link InjectionMetadata.InjectedElement} Metadata from annotated {@link Reference @Reference} methods
-     *
+     * 方法级引用元信息
      * @param beanClass The {@link Class} of Bean
      * @return non-null {@link List}
      */
@@ -200,6 +200,12 @@ public class ReferenceAnnotationBeanPostProcessor extends InstantiationAwareBean
 
     }
 
+    /**
+     * @param beanName
+     * @param clazz
+     * @param pvs
+     * @return
+     */
     private InjectionMetadata findReferenceMetadata(String beanName, Class<?> clazz, PropertyValues pvs) {
         // Fall back to class name as cache key, for backwards compatibility with custom callers.
         String cacheKey = (StringUtils.isNotEmpty(beanName) ? beanName : clazz.getName());
@@ -281,13 +287,19 @@ public class ReferenceAnnotationBeanPostProcessor extends InstantiationAwareBean
 
     /**
      * {@link Reference} {@link InjectionMetadata} implementation
-     *
+     * 引用注入元数据
      * @since 2.5.11
      */
     private static class ReferenceInjectionMetadata extends InjectionMetadata {
 
+        /**
+         * 字段级引用元素集
+         */
         private final Collection<ReferenceFieldElement> fieldElements;
 
+        /**
+         * 方法级引用元素集
+         */
         private final Collection<ReferenceMethodElement> methodElements;
 
 
@@ -379,6 +391,13 @@ public class ReferenceAnnotationBeanPostProcessor extends InstantiationAwareBean
 
     }
 
+    /**
+     * 构建引用bean
+     * @param reference
+     * @param referenceClass
+     * @return
+     * @throws Exception
+     */
     private ReferenceBean<?> buildReferenceBean(Reference reference, Class<?> referenceClass) throws Exception {
 
         String referenceBeanCacheKey = generateReferenceBeanCacheKey(reference, referenceClass);

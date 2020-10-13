@@ -23,7 +23,7 @@ import java.util.Map;
 
 /**
  * RegistryConfig
- *
+ * 注解器配置
  * @export
  */
 public class RegistryConfig extends AbstractConfig {

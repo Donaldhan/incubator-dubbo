@@ -23,7 +23,7 @@ import java.util.List;
 
 /**
  * ModuleConfig
- *
+ * 模块配置
  * @export
  */
 public class ModuleConfig extends AbstractConfig {

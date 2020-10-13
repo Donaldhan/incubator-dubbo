@@ -18,7 +18,7 @@ package org.apache.dubbo.config;
 
 /**
  * ConsumerConfig
- *
+ * 消费者配置
  * @export
  */
 public class ConsumerConfig extends AbstractReferenceConfig {
