@@ -41,14 +41,26 @@ abstract class AbstractAnnotationConfigBeanBuilder<A extends Annotation, B exten
 
     protected final Log logger = LogFactory.getLog(getClass());
 
+    /**
+     *
+     */
     protected final A annotation;
 
     protected final ApplicationContext applicationContext;
 
+    /**
+     *
+     */
     protected final ClassLoader classLoader;
 
+    /**
+     *
+     */
     protected Object bean;
 
+    /**
+     *
+     */
     protected Class<?> interfaceClass;
 
     protected AbstractAnnotationConfigBeanBuilder(A annotation, ClassLoader classLoader,
@@ -73,7 +85,7 @@ abstract class AbstractAnnotationConfigBeanBuilder<A extends Annotation, B exten
         checkDependencies();
 
         B bean = doBuild();
-
+        //配置bean
         configureBean(bean);
 
         if (logger.isInfoEnabled()) {
@@ -84,6 +96,9 @@ abstract class AbstractAnnotationConfigBeanBuilder<A extends Annotation, B exten
 
     }
 
+    /**
+     *
+     */
     private void checkDependencies() {
 
     }
@@ -96,10 +111,13 @@ abstract class AbstractAnnotationConfigBeanBuilder<A extends Annotation, B exten
     protected abstract B doBuild();
 
 
+    /**
+     * @param bean
+     * @throws Exception
+     */
     protected void configureBean(B bean) throws Exception {
 
         preConfigureBean(annotation, bean);
-
         configureRegistryConfigs(bean);
 
         configureMonitorConfig(bean);
@@ -112,9 +130,19 @@ abstract class AbstractAnnotationConfigBeanBuilder<A extends Annotation, B exten
 
     }
 
+    /**
+     * 预处理
+     * @param annotation
+     * @param bean
+     * @throws Exception
+     */
     protected abstract void preConfigureBean(A annotation, B bean) throws Exception;
 
 
+    /**
+     * 配置注册器
+     * @param bean
+     */
     private void configureRegistryConfigs(B bean) {
 
         String[] registryConfigBeanIds = resolveRegistryConfigBeanNames(annotation);
@@ -125,6 +153,9 @@ abstract class AbstractAnnotationConfigBeanBuilder<A extends Annotation, B exten
 
     }
 
+    /**
+     * @param bean
+     */
     private void configureMonitorConfig(B bean) {
 
         String monitorBeanName = resolveMonitorConfigBeanName(annotation);
@@ -135,6 +166,10 @@ abstract class AbstractAnnotationConfigBeanBuilder<A extends Annotation, B exten
 
     }
 
+    /**
+     * 配置应用配置
+     * @param bean
+     */
     private void configureApplicationConfig(B bean) {
 
         String applicationConfigBeanName = resolveApplicationConfigBeanName(annotation);
@@ -192,7 +227,7 @@ abstract class AbstractAnnotationConfigBeanBuilder<A extends Annotation, B exten
 
     /**
      * Configures Bean
-     *
+     * 配置后处理
      * @param annotation
      * @param bean
      */

@@ -45,6 +45,10 @@ class ReferenceBeanBuilder extends AbstractAnnotationConfigBeanBuilder<Reference
         super(annotation, classLoader, applicationContext);
     }
 
+    /**
+     * @param reference
+     * @param referenceBean
+     */
     private void configureInterface(Reference reference, ReferenceBean referenceBean) {
 
         Class<?> interfaceClass = reference.interfaceClass();
@@ -56,6 +60,7 @@ class ReferenceBeanBuilder extends AbstractAnnotationConfigBeanBuilder<Reference
             String interfaceClassName = reference.interfaceName();
 
             if (StringUtils.hasText(interfaceClassName)) {
+                //如果接口可以从类加载器，加载，则加载相应的接口
                 if (ClassUtils.isPresent(interfaceClassName, classLoader)) {
                     interfaceClass = ClassUtils.resolveClassName(interfaceClassName, classLoader);
                 }
@@ -75,10 +80,14 @@ class ReferenceBeanBuilder extends AbstractAnnotationConfigBeanBuilder<Reference
     }
 
 
+    /**
+     * @param reference
+     * @param referenceBean
+     */
     private void configureConsumerConfig(Reference reference, ReferenceBean<?> referenceBean) {
 
         String consumerBeanName = reference.consumer();
-
+        //获取配置
         ConsumerConfig consumerConfig = getOptionalBean(applicationContext, consumerBeanName, ConsumerConfig.class);
 
         referenceBean.setConsumer(consumerConfig);
@@ -133,17 +142,24 @@ class ReferenceBeanBuilder extends AbstractAnnotationConfigBeanBuilder<Reference
 
     @Override
     protected void postConfigureBean(Reference annotation, ReferenceBean bean) throws Exception {
-
+        //配置bean应用上下文
         bean.setApplicationContext(applicationContext);
-
+        //配置bean接口类
         configureInterface(annotation, bean);
-
+        //配置消息者
         configureConsumerConfig(annotation, bean);
 
         bean.afterPropertiesSet();
 
     }
 
+    /**
+     *
+     * @param annotation
+     * @param classLoader
+     * @param applicationContext
+     * @return
+     */
     public static ReferenceBeanBuilder create(Reference annotation, ClassLoader classLoader,
                                               ApplicationContext applicationContext) {
         return new ReferenceBeanBuilder(annotation, classLoader, applicationContext);

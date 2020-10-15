@@ -25,12 +25,25 @@ import java.util.Optional;
 
 /**
  * Consumer Model which is about subscribed services.
+ * 消费值模型
  */
 public class ConsumerModel {
+    /**
+     * 代理对象
+     */
     private final Object proxyObject;
+    /**
+     * 服务名
+     */
     private final String serviceName;
+    /**
+     * 服务接口类
+     */
     private final Class<?> serviceInterfaceClass;
 
+    /**
+     *
+     */
     private final Map<Method, ConsumerMethodModel> methodModels = new IdentityHashMap<Method, ConsumerMethodModel>();
 
     public ConsumerModel(String serviceName, Class<?> serviceInterfaceClass, Object proxyObject, Method[] methods, Map<String, Object> attributes) {

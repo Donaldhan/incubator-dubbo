@@ -47,7 +47,7 @@ public class BeanFactoryUtils {
 
     /**
      * Get optional Bean
-     *
+     *从bean工厂获取给定bean名的bean类型
      * @param beanFactory {@link ListableBeanFactory}
      * @param beanName    the name of Bean
      * @param beanType    the {@link Class type} of Bean

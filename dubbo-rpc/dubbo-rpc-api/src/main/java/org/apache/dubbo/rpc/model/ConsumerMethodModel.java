@@ -21,13 +21,28 @@ import org.apache.dubbo.common.Constants;
 import java.lang.reflect.Method;
 import java.util.Map;
 
+/**
+ * 消费者模型
+ */
 public class ConsumerMethodModel {
     private final Method method;
     //    private final boolean isCallBack;
 //    private final boolean isFuture;
+    /**
+     *
+     */
     private final String[] parameterTypes;
+    /**
+     *
+     */
     private final Class<?>[] parameterClasses;
+    /**
+     *
+     */
     private final Class<?> returnClass;
+    /**
+     *
+     */
     private final String methodName;
     private final boolean generic;
 

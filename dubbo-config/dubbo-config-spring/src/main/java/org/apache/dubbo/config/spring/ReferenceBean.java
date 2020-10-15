@@ -80,6 +80,7 @@ public class ReferenceBean<T> extends ReferenceConfig<T> implements FactoryBean,
     @SuppressWarnings({"unchecked"})
     public void afterPropertiesSet() throws Exception {
         if (getConsumer() == null) {
+            //获取消费者配置
             Map<String, ConsumerConfig> consumerConfigMap = applicationContext == null ? null : BeanFactoryUtils.beansOfTypeIncludingAncestors(applicationContext, ConsumerConfig.class, false, false);
             if (consumerConfigMap != null && consumerConfigMap.size() > 0) {
                 ConsumerConfig consumerConfig = null;
@@ -92,12 +93,14 @@ public class ReferenceBean<T> extends ReferenceConfig<T> implements FactoryBean,
                     }
                 }
                 if (consumerConfig != null) {
+                    //设置消费配置
                     setConsumer(consumerConfig);
                 }
             }
         }
         if (getApplication() == null
                 && (getConsumer() == null || getConsumer().getApplication() == null)) {
+            //获取应用配置
             Map<String, ApplicationConfig> applicationConfigMap = applicationContext == null ? null : BeanFactoryUtils.beansOfTypeIncludingAncestors(applicationContext, ApplicationConfig.class, false, false);
             if (applicationConfigMap != null && applicationConfigMap.size() > 0) {
                 ApplicationConfig applicationConfig = null;
@@ -110,6 +113,7 @@ public class ReferenceBean<T> extends ReferenceConfig<T> implements FactoryBean,
                     }
                 }
                 if (applicationConfig != null) {
+                    //设置应用配置
                     setApplication(applicationConfig);
                 }
             }
@@ -135,6 +139,7 @@ public class ReferenceBean<T> extends ReferenceConfig<T> implements FactoryBean,
         if ((getRegistries() == null || getRegistries().isEmpty())
                 && (getConsumer() == null || getConsumer().getRegistries() == null || getConsumer().getRegistries().isEmpty())
                 && (getApplication() == null || getApplication().getRegistries() == null || getApplication().getRegistries().isEmpty())) {
+            //获取注册器配置
             Map<String, RegistryConfig> registryConfigMap = applicationContext == null ? null : BeanFactoryUtils.beansOfTypeIncludingAncestors(applicationContext, RegistryConfig.class, false, false);
             if (registryConfigMap != null && registryConfigMap.size() > 0) {
                 List<RegistryConfig> registryConfigs = new ArrayList<>();
@@ -144,6 +149,7 @@ public class ReferenceBean<T> extends ReferenceConfig<T> implements FactoryBean,
                     }
                 }
                 if (!registryConfigs.isEmpty()) {
+                    //配置注解器
                     super.setRegistries(registryConfigs);
                 }
             }
