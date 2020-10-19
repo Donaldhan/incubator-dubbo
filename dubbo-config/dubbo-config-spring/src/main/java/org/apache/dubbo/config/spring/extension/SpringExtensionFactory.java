@@ -43,12 +43,16 @@ public class SpringExtensionFactory implements ExtensionFactory {
     private static final Set<ApplicationContext> contexts = new ConcurrentHashSet<ApplicationContext>();
     private static final ApplicationListener shutdownHookListener = new ShutdownHookListener();
 
+    /**
+     * @param context
+     */
     public static void addApplicationContext(ApplicationContext context) {
         contexts.add(context);
         if (context instanceof ConfigurableApplicationContext) {
             ((ConfigurableApplicationContext) context).registerShutdownHook();
             DubboShutdownHook.getDubboShutdownHook().unregister();
         }
+        //添加关闭hook监听器
         BeanFactoryUtils.addApplicationListener(context, shutdownHookListener);
     }
 

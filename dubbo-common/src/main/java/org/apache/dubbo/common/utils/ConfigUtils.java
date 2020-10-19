@@ -139,6 +139,9 @@ public class ConfigUtils {
         return sb.toString();
     }
 
+    /**
+     * @return
+     */
     public static Properties getProperties() {
         if (PROPERTIES == null) {
             synchronized (ConfigUtils.class) {

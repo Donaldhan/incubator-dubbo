@@ -18,10 +18,25 @@ package org.apache.dubbo.rpc.model;
 
 import java.lang.reflect.Method;
 
+/**
+ *
+ */
 public class ProviderMethodModel {
+    /**
+     * 提供者方法
+     */
     private transient final Method method;
+    /**
+     * 方法名
+     */
     private final String methodName;
+    /**
+     * 方法参数
+     */
     private final String[] methodArgTypes;
+    /**
+     * 服务名
+     */
     private final String serviceName;
 
 

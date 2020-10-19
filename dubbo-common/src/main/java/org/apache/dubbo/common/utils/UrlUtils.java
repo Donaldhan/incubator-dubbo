@@ -25,6 +25,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ *
+ */
 public class UrlUtils {
 
     /**
@@ -32,6 +35,11 @@ public class UrlUtils {
      */
     private final static String URL_PARAM_STARTING_SYMBOL = "?";
 
+    /**
+     * @param address
+     * @param defaults
+     * @return
+     */
     public static URL parseURL(String address, Map<String, String> defaults) {
         if (address == null || address.length() == 0) {
             return null;
@@ -55,6 +63,7 @@ public class UrlUtils {
         }
         String defaultProtocol = defaults == null ? null : defaults.get("protocol");
         if (defaultProtocol == null || defaultProtocol.length() == 0) {
+            //默认dubbo
             defaultProtocol = "dubbo";
         }
         String defaultUsername = defaults == null ? null : defaults.get("username");
@@ -129,6 +138,12 @@ public class UrlUtils {
         return u;
     }
 
+    /**
+     * 解析注解地址
+     * @param address
+     * @param defaults
+     * @return
+     */
     public static List<URL> parseURLs(String address, Map<String, String> defaults) {
         if (address == null || address.length() == 0) {
             return null;
@@ -205,6 +220,10 @@ public class UrlUtils {
         return newSubscribe;
     }
 
+    /**
+     * @param register
+     * @return
+     */
     public static Map<String, Map<String, String>> revertRegister(Map<String, Map<String, String>> register) {
         Map<String, Map<String, String>> newRegister = new HashMap<String, Map<String, String>>();
         for (Map.Entry<String, Map<String, String>> entry : register.entrySet()) {
@@ -240,6 +259,10 @@ public class UrlUtils {
         return newRegister;
     }
 
+    /**
+     * @param subscribe
+     * @return
+     */
     public static Map<String, String> revertSubscribe(Map<String, String> subscribe) {
         Map<String, String> newSubscribe = new HashMap<String, String>();
         for (Map.Entry<String, String> entry : subscribe.entrySet()) {
@@ -266,6 +289,10 @@ public class UrlUtils {
         return newSubscribe;
     }
 
+    /**
+     * @param notify
+     * @return
+     */
     public static Map<String, Map<String, String>> revertNotify(Map<String, Map<String, String>> notify) {
         if (notify != null && notify.size() > 0) {
             Map<String, Map<String, String>> newNotify = new HashMap<String, Map<String, String>>();
@@ -306,7 +333,12 @@ public class UrlUtils {
         return notify;
     }
 
-    //compatible for dubbo-2.0.0
+    /**
+     * compatible for dubbo-2.0.0
+     * @param forbid
+     * @param subscribed
+     * @return
+     */
     public static List<String> revertForbid(List<String> forbid, Set<URL> subscribed) {
         if (forbid != null && !forbid.isEmpty()) {
             List<String> newForbid = new ArrayList<String>();

@@ -27,8 +27,17 @@ import java.util.Map;
  * ProviderModel which is about published services
  */
 public class ProviderModel {
+    /**
+     * 服务名
+     */
     private final String serviceName;
+    /**
+     * 服务接口实现
+     */
     private final Object serviceInstance;
+    /**
+     * 服务接口
+     */
     private final Class<?> serviceInterfaceClass;
     private final Map<String, List<ProviderMethodModel>> methods = new HashMap<String, List<ProviderMethodModel>>();
 
@@ -77,6 +86,9 @@ public class ProviderModel {
         return null;
     }
 
+    /**
+     * 初始化方法
+     */
     private void initMethod() {
         Method[] methodsToExport = null;
         methodsToExport = this.serviceInterfaceClass.getMethods();

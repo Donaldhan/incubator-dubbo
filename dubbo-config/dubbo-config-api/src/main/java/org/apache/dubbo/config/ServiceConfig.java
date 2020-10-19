@@ -76,18 +76,42 @@ public class ServiceConfig<T> extends AbstractServiceConfig {
 
     private static final Map<String, Integer> RANDOM_PORT_MAP = new HashMap<String, Integer>();
 
+    /**
+     *
+     */
     private static final ScheduledExecutorService delayExportExecutor = Executors.newSingleThreadScheduledExecutor(new NamedThreadFactory("DubboServiceDelayExporter", true));
+    /**
+     *
+     */
     private final List<URL> urls = new ArrayList<URL>();
+    /**
+     *
+     */
     private final List<Exporter<?>> exporters = new ArrayList<Exporter<?>>();
-    // interface type
+    /**
+     * interface type
+     */
     private String interfaceName;
+    /**
+     *
+     */
     private Class<?> interfaceClass;
-    // reference to interface impl
+    /**
+     * reference to interface impl
+     * 接口实现
+     */
     private T ref;
-    // service name
+    /**
+     *service name, 服务名
+     */
     private String path;
-    // method configuration
+    /**
+     * method configuration
+     */
     private List<MethodConfig> methods;
+    /**
+     *
+     */
     private ProviderConfig provider;
     private transient volatile boolean exported;
 
@@ -102,6 +126,10 @@ public class ServiceConfig<T> extends AbstractServiceConfig {
         appendAnnotation(Service.class, service);
     }
 
+    /**
+     * @param providers
+     * @return
+     */
     @Deprecated
     private static List<ProtocolConfig> convertProviderToProtocol(List<ProviderConfig> providers) {
         if (providers == null || providers.isEmpty()) {
@@ -114,6 +142,10 @@ public class ServiceConfig<T> extends AbstractServiceConfig {
         return protocols;
     }
 
+    /**
+     * @param protocols
+     * @return
+     */
     @Deprecated
     private static List<ProviderConfig> convertProtocolToProvider(List<ProtocolConfig> protocols) {
         if (protocols == null || protocols.isEmpty()) {
@@ -126,6 +158,10 @@ public class ServiceConfig<T> extends AbstractServiceConfig {
         return providers;
     }
 
+    /**
+     * @param provider
+     * @return
+     */
     @Deprecated
     private static ProtocolConfig convertProviderToProtocol(ProviderConfig provider) {
         ProtocolConfig protocol = new ProtocolConfig();
@@ -142,6 +178,10 @@ public class ServiceConfig<T> extends AbstractServiceConfig {
         return protocol;
     }
 
+    /**
+     * @param protocol
+     * @return
+     */
     @Deprecated
     private static ProviderConfig convertProtocolToProvider(ProtocolConfig protocol) {
         ProviderConfig provider = new ProviderConfig();
@@ -192,6 +232,9 @@ public class ServiceConfig<T> extends AbstractServiceConfig {
         return unexported;
     }
 
+    /**
+     * 暴露服务
+     */
     public synchronized void export() {
         if (provider != null) {
             if (export == null) {
@@ -206,12 +249,16 @@ public class ServiceConfig<T> extends AbstractServiceConfig {
         }
 
         if (delay != null && delay > 0) {
+            //延迟调度
             delayExportExecutor.schedule(this::doExport, delay, TimeUnit.MILLISECONDS);
         } else {
             doExport();
         }
     }
 
+    /**
+     * 暴露服务
+     */
     protected synchronized void doExport() {
         if (unexported) {
             throw new IllegalStateException("Already unexported!");
@@ -221,6 +268,7 @@ public class ServiceConfig<T> extends AbstractServiceConfig {
         }
         exported = true;
         if (interfaceName == null || interfaceName.length() == 0) {
+            //接口名不能为空
             throw new IllegalStateException("<dubbo:service interface=\"\" /> interface not allow null!");
         }
         checkDefault();
@@ -310,11 +358,17 @@ public class ServiceConfig<T> extends AbstractServiceConfig {
         if (path == null || path.length() == 0) {
             path = interfaceName;
         }
+        //提供模型
         ProviderModel providerModel = new ProviderModel(getUniqueServiceName(), ref, interfaceClass);
+        //初始化模型提供者模型
         ApplicationModel.initProviderModel(getUniqueServiceName(), providerModel);
+        //暴露服务url
         doExportUrls();
     }
 
+    /**
+     *
+     */
     private void checkRef() {
         // reference should not be null, and is the implementation of the given interface
         if (ref == null) {
@@ -327,6 +381,9 @@ public class ServiceConfig<T> extends AbstractServiceConfig {
         }
     }
 
+    /**
+     *
+     */
     public synchronized void unexport() {
         if (!exported) {
             return;
@@ -347,14 +404,22 @@ public class ServiceConfig<T> extends AbstractServiceConfig {
         unexported = true;
     }
 
+    /**
+     * 暴露服务url
+     */
     @SuppressWarnings({"unchecked", "rawtypes"})
     private void doExportUrls() {
+        //加载注册器地址
         List<URL> registryURLs = loadRegistries(true);
         for (ProtocolConfig protocolConfig : protocols) {
             doExportUrlsFor1Protocol(protocolConfig, registryURLs);
         }
     }
 
+    /**
+     * @param protocolConfig
+     * @param registryURLs
+     */
     private void doExportUrlsFor1Protocol(ProtocolConfig protocolConfig, List<URL> registryURLs) {
         String name = protocolConfig.getName();
         if (name == null || name.length() == 0) {
@@ -479,9 +544,11 @@ public class ServiceConfig<T> extends AbstractServiceConfig {
 
             // export to local if the config is not remote (export to remote only when config is remote)
             if (!Constants.SCOPE_REMOTE.equalsIgnoreCase(scope)) {
+                //暴露本地服务
                 exportLocal(url);
             }
             // export to remote if the config is not local (export to local only when config is local)
+            //暴露服务到远程注册器
             if (!Constants.SCOPE_LOCAL.equalsIgnoreCase(scope)) {
                 if (logger.isInfoEnabled()) {
                     logger.info("Export dubbo service " + interfaceClass.getName() + " to url " + url);
@@ -521,6 +588,10 @@ public class ServiceConfig<T> extends AbstractServiceConfig {
         this.urls.add(url);
     }
 
+    /**
+     * 暴露本地注册器地址
+     * @param url
+     */
     @SuppressWarnings({"unchecked", "rawtypes"})
     private void exportLocal(URL url) {
         if (!Constants.LOCAL_PROTOCOL.equalsIgnoreCase(url.getProtocol())) {
@@ -543,7 +614,7 @@ public class ServiceConfig<T> extends AbstractServiceConfig {
      * Register & bind IP address for service provider, can be configured separately.
      * Configuration priority: environment variables -> java system properties -> host property in config file ->
      * /etc/hosts -> default network address -> first available network address
-     *
+     * 获取注册器host
      * @param protocolConfig
      * @param registryURLs
      * @param map
@@ -622,7 +693,7 @@ public class ServiceConfig<T> extends AbstractServiceConfig {
      * Register port and bind port for the provider, can be configured separately
      * Configuration priority: environment variable -> java system properties -> port property in protocol config file
      * -> protocol default port
-     *
+     * 获取注册器地址
      * @param protocolConfig
      * @param name
      * @return
@@ -691,6 +762,9 @@ public class ServiceConfig<T> extends AbstractServiceConfig {
         return port;
     }
 
+    /**
+     * 没有提供者，则创建一个默认的服务提供者配置
+     */
     private void checkDefault() {
         if (provider == null) {
             provider = new ProviderConfig();

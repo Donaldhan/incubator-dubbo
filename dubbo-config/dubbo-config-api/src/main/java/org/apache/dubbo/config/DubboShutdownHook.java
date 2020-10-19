@@ -82,6 +82,7 @@ public class DubboShutdownHook extends Thread {
 
     /**
      * Destroy all the resources, including registries and protocols.
+     * 销毁所有资源
      */
     public void doDestroy() {
         if (!destroyed.compareAndSet(false, true)) {

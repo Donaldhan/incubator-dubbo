@@ -38,10 +38,12 @@ public class ApplicationModel {
 
     /**
      * full qualified class name -> provided service
+     * 服务提供者
      */
     private static final ConcurrentMap<String, ProviderModel> providedServices = new ConcurrentHashMap<>();
     /**
      * full qualified class name -> subscribe service
+     * 消费者订阅服务
      */
     private static final ConcurrentMap<String, ConsumerModel> consumedServices = new ConcurrentHashMap<>();
 
@@ -61,12 +63,21 @@ public class ApplicationModel {
         return consumedServices.get(serviceName);
     }
 
+    /**
+     * 初始化消费者订阅服务
+     * @param serviceName
+     * @param consumerModel
+     */
     public static void initConsumerModel(String serviceName, ConsumerModel consumerModel) {
         if (consumedServices.putIfAbsent(serviceName, consumerModel) != null) {
             LOGGER.warn("Already register the same consumer:" + serviceName);
         }
     }
 
+    /**
+     * @param serviceName
+     * @param providerModel
+     */
     public static void initProviderModel(String serviceName, ProviderModel providerModel) {
         if (providedServices.putIfAbsent(serviceName, providerModel) != null) {
             LOGGER.warn("Already register the same:" + serviceName);
