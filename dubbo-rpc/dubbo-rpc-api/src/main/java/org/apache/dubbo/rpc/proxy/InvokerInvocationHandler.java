@@ -54,6 +54,7 @@ public class InvokerInvocationHandler implements InvocationHandler {
 
         RpcInvocation invocation;
         if (RpcUtils.hasGeneratedFuture(method)) {
+            //AsyncFor注解类，或方法为CompletableFuture 返回值
             Class<?> clazz = method.getDeclaringClass();
             String syncMethodName = methodName.substring(0, methodName.length() - Constants.ASYNC_SUFFIX.length());
             Method syncMethod = clazz.getMethod(syncMethodName, method.getParameterTypes());
@@ -63,6 +64,7 @@ public class InvokerInvocationHandler implements InvocationHandler {
         } else {
             invocation = new RpcInvocation(method, args);
             if (RpcUtils.hasFutureReturnType(method)) {
+                //CompletableFuture 返回值
                 invocation.setAttachment(Constants.FUTURE_RETURNTYPE_KEY, "true");
                 invocation.setAttachment(Constants.ASYNC_KEY, "true");
             }

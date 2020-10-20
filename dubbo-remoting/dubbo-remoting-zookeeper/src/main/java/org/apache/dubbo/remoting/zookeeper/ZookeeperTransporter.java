@@ -21,6 +21,11 @@ import org.apache.dubbo.common.URL;
 import org.apache.dubbo.common.extension.Adaptive;
 import org.apache.dubbo.common.extension.SPI;
 
+/**
+ * SPI
+ * see org.apache.dubbo.remoting.zookeeper.ZookeeperTransporter file
+ * /META-INFO/dubbo
+ */
 @SPI("curator")
 public interface ZookeeperTransporter {
 
