@@ -538,6 +538,7 @@ public class ServiceConfig<T> extends AbstractServiceConfig {
 
         String host = this.findConfigedHosts(protocolConfig, registryURLs, map);
         Integer port = this.findConfigedPorts(protocolConfig, name, map);
+        //dubbo
         URL url = new URL(name, host, port, (contextPath == null || contextPath.length() == 0 ? "" : contextPath + "/") + path, map);
 
         if (ExtensionLoader.getExtensionLoader(ConfiguratorFactory.class)
@@ -580,7 +581,7 @@ public class ServiceConfig<T> extends AbstractServiceConfig {
                         //创建代理Invoke JavassistProxyFactory
                         Invoker<?> invoker = proxyFactory.getInvoker(ref, (Class) interfaceClass, registryURL.addParameterAndEncoded(Constants.EXPORT_KEY, url.toFullString()));
                         DelegateProviderMetaDataInvoker wrapperInvoker = new DelegateProviderMetaDataInvoker(invoker, this);
-                        //ProtocolFilterWrapper ,ZookeeperRegistry ,RestProtocol，RmiProtocol
+                        //ProtocolFilterWrapper ,ZookeeperRegistry ,RestProtocol，RmiProtocol，DubboProtocol
                         Exporter<?> exporter = protocol.export(wrapperInvoker);
                         exporters.add(exporter);
                     }

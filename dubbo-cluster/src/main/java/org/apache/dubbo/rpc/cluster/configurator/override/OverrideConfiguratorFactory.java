@@ -19,9 +19,10 @@ package org.apache.dubbo.rpc.cluster.configurator.override;
 import org.apache.dubbo.common.URL;
 import org.apache.dubbo.rpc.cluster.Configurator;
 import org.apache.dubbo.rpc.cluster.ConfiguratorFactory;
+import org.apache.dubbo.rpc.cluster.configurator.absent.AbsentConfiguratorFactory;
 
 /**
- * AbsentConfiguratorFactory
+ * @see AbsentConfiguratorFactory
  *
  */
 public class OverrideConfiguratorFactory implements ConfiguratorFactory {

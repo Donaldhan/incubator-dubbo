@@ -245,7 +245,7 @@ public class DubboProtocol extends AbstractProtocol {
     public <T> Exporter<T> export(Invoker<T> invoker) throws RpcException {
         URL url = invoker.getUrl();
 
-        // export service.
+        // export service. 暴露的服务key
         String key = serviceKey(url);
         DubboExporter<T> exporter = new DubboExporter<T>(invoker, key, exporterMap);
         exporterMap.put(key, exporter);
@@ -270,6 +270,9 @@ public class DubboProtocol extends AbstractProtocol {
         return exporter;
     }
 
+    /**
+     * @param url
+     */
     private void openServer(URL url) {
         // find server.
         String key = url.getAddress();
@@ -281,6 +284,7 @@ public class DubboProtocol extends AbstractProtocol {
                 synchronized (this) {
                     server = serverMap.get(key);
                     if (server == null) {
+                        //
                         serverMap.put(key, createServer(url));
                     }
                 }
@@ -291,6 +295,10 @@ public class DubboProtocol extends AbstractProtocol {
         }
     }
 
+    /**
+     * @param url
+     * @return
+     */
     private ExchangeServer createServer(URL url) {
         // send readonly event when server closes, it's enabled by default
         url = url.addParameterIfAbsent(Constants.CHANNEL_READONLYEVENT_SENT_KEY, Boolean.TRUE.toString());
@@ -309,6 +317,7 @@ public class DubboProtocol extends AbstractProtocol {
         } catch (RemotingException e) {
             throw new RpcException("Fail to start server(url: " + url + ") " + e.getMessage(), e);
         }
+        //netty
         str = url.getParameter(Constants.CLIENT_KEY);
         if (str != null && str.length() > 0) {
             Set<String> supportedTypes = ExtensionLoader.getExtensionLoader(Transporter.class).getSupportedExtensions();
