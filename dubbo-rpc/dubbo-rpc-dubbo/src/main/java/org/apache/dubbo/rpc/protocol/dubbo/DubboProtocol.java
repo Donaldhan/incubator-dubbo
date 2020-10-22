@@ -65,6 +65,9 @@ public class DubboProtocol extends AbstractProtocol {
 
     public static final int DEFAULT_PORT = 20880;
     private static final String IS_CALLBACK_SERVICE_INVOKE = "_isCallBackServiceInvoke";
+    /**
+     *
+     */
     private static DubboProtocol INSTANCE;
     /**
      *
@@ -166,6 +169,10 @@ public class DubboProtocol extends AbstractProtocol {
             invoke(channel, Constants.ON_DISCONNECT_KEY);
         }
 
+        /**
+         * @param channel
+         * @param methodKey
+         */
         private void invoke(Channel channel, String methodKey) {
             Invocation invocation = createInvocation(channel, channel.getUrl(), methodKey);
             if (invocation != null) {
@@ -177,6 +184,12 @@ public class DubboProtocol extends AbstractProtocol {
             }
         }
 
+        /**
+         * @param channel
+         * @param url
+         * @param methodKey
+         * @return
+         */
         private Invocation createInvocation(Channel channel, URL url, String methodKey) {
             String method = url.getParameter(methodKey);
             if (method == null || method.length() == 0) {
@@ -198,6 +211,9 @@ public class DubboProtocol extends AbstractProtocol {
         INSTANCE = this;
     }
 
+    /**
+     * @return
+     */
     public static DubboProtocol getDubboProtocol() {
         if (INSTANCE == null) {
             ExtensionLoader.getExtensionLoader(Protocol.class).getExtension(DubboProtocol.NAME); // load
@@ -205,10 +221,16 @@ public class DubboProtocol extends AbstractProtocol {
         return INSTANCE;
     }
 
+    /**
+     * @return
+     */
     public Collection<ExchangeServer> getServers() {
         return Collections.unmodifiableCollection(serverMap.values());
     }
 
+    /**
+     * @return
+     */
     public Collection<Exporter<?>> getExporters() {
         return Collections.unmodifiableCollection(exporterMap.values());
     }
@@ -217,6 +239,10 @@ public class DubboProtocol extends AbstractProtocol {
         return exporterMap;
     }
 
+    /**
+     * @param channel
+     * @return
+     */
     private boolean isClientSide(Channel channel) {
         InetSocketAddress address = channel.getRemoteAddress();
         URL url = channel.getUrl();
@@ -225,6 +251,12 @@ public class DubboProtocol extends AbstractProtocol {
                         .equals(NetUtils.filterLocalHost(address.getAddress().getHostAddress()));
     }
 
+    /**
+     * @param channel
+     * @param inv
+     * @return
+     * @throws RemotingException
+     */
     Invoker<?> getInvoker(Channel channel, Invocation inv) throws RemotingException {
         boolean isCallBackServiceInvoke = false;
         boolean isStubServiceInvoke = false;
@@ -252,6 +284,9 @@ public class DubboProtocol extends AbstractProtocol {
         return exporter.getInvoker();
     }
 
+    /**
+     * @return
+     */
     public Collection<Invoker<?>> getInvokers() {
         return Collections.unmodifiableCollection(invokers);
     }
@@ -291,6 +326,7 @@ public class DubboProtocol extends AbstractProtocol {
     }
 
     /**
+     *
      * @param url
      */
     private void openServer(URL url) {
@@ -324,12 +360,13 @@ public class DubboProtocol extends AbstractProtocol {
         url = url.addParameterIfAbsent(Constants.CHANNEL_READONLYEVENT_SENT_KEY, Boolean.TRUE.toString());
         // enable heartbeat by default
         url = url.addParameterIfAbsent(Constants.HEARTBEAT_KEY, String.valueOf(Constants.DEFAULT_HEARTBEAT));
+        //默认为netty
         String str = url.getParameter(Constants.SERVER_KEY, Constants.DEFAULT_REMOTING_SERVER);
-
+        //保证Transporter存在具体的实现
         if (str != null && str.length() > 0 && !ExtensionLoader.getExtensionLoader(Transporter.class).hasExtension(str)) {
             throw new RpcException("Unsupported server type: " + str + ", url: " + url);
         }
-
+        //添加协议编码器
         url = url.addParameter(Constants.CODEC_KEY, DubboCodec.NAME);
         ExchangeServer server;
         try {

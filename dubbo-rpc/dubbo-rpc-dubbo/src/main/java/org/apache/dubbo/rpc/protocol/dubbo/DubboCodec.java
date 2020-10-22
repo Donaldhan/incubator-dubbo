@@ -43,6 +43,7 @@ import java.io.InputStream;
 import static org.apache.dubbo.rpc.protocol.dubbo.CallbackServiceCodec.encodeInvocationArgument;
 
 /**
+ * dubbo 编码器
  * Dubbo codec.
  */
 public class DubboCodec extends ExchangeCodec implements Codec2 {

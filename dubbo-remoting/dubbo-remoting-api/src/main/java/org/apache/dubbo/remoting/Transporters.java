@@ -40,6 +40,12 @@ public class Transporters {
         return bind(URL.valueOf(url), handler);
     }
 
+    /**
+     * @param url
+     * @param handlers
+     * @return
+     * @throws RemotingException
+     */
     public static Server bind(URL url, ChannelHandler... handlers) throws RemotingException {
         if (url == null) {
             throw new IllegalArgumentException("url == null");
@@ -75,6 +81,9 @@ public class Transporters {
         return getTransporter().connect(url, handler);
     }
 
+    /**
+     * @return
+     */
     public static Transporter getTransporter() {
         return ExtensionLoader.getExtensionLoader(Transporter.class).getAdaptiveExtension();
     }

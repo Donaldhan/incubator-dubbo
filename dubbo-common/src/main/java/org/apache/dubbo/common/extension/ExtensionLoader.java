@@ -380,6 +380,10 @@ public class ExtensionLoader<T> {
         return c != null;
     }
 
+    /**
+     * 获取支持的扩展实现
+     * @return
+     */
     public Set<String> getSupportedExtensions() {
         Map<String, Class<?>> clazzes = getExtensionClasses();
         return Collections.unmodifiableSet(new TreeSet<String>(clazzes.keySet()));

@@ -166,14 +166,25 @@ public final class Version {
         }
     }
 
+    /**
+     * @param cls
+     * @param failOnError
+     */
     public static void checkDuplicate(Class<?> cls, boolean failOnError) {
         checkDuplicate(cls.getName().replace('.', '/') + ".class", failOnError);
     }
 
+    /**
+     * @param cls
+     */
     public static void checkDuplicate(Class<?> cls) {
         checkDuplicate(cls, false);
     }
 
+    /**
+     * @param path
+     * @param failOnError
+     */
     public static void checkDuplicate(String path, boolean failOnError) {
         try {
             // search in caller's classloader
