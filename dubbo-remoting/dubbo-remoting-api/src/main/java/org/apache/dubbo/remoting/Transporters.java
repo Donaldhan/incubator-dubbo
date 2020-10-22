@@ -59,6 +59,7 @@ public class Transporters {
         } else {
             handler = new ChannelHandlerDispatcher(handlers);
         }
+        //绑定url
         return getTransporter().bind(url, handler);
     }
 
