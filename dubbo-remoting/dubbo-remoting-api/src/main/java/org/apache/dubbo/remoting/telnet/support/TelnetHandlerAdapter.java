@@ -80,6 +80,11 @@ public class TelnetHandlerAdapter extends ChannelHandlerAdapter implements Telne
         return buf.toString();
     }
 
+    /**
+     * @param url
+     * @param command
+     * @return
+     */
     private boolean commandEnabled(URL url, String command) {
         boolean commandEnable = false;
         String supportCommands = url.getParameter(Constants.TELNET);

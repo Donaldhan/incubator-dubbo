@@ -49,8 +49,17 @@ public class TraceFilter implements Filter {
 
     private static final String TRACE_COUNT = "trace.count";
 
+    /**
+     *
+     */
     private static final ConcurrentMap<String, Set<Channel>> tracers = new ConcurrentHashMap<String, Set<Channel>>();
 
+    /**
+     * @param type
+     * @param method
+     * @param channel
+     * @param max
+     */
     public static void addTracer(Class<?> type, String method, Channel channel, int max) {
         channel.setAttribute(TRACE_MAX, max);
         channel.setAttribute(TRACE_COUNT, new AtomicInteger());
@@ -63,6 +72,11 @@ public class TraceFilter implements Filter {
         channels.add(channel);
     }
 
+    /**
+     * @param type
+     * @param method
+     * @param channel
+     */
     public static void removeTracer(Class<?> type, String method, Channel channel) {
         channel.removeAttribute(TRACE_MAX);
         channel.removeAttribute(TRACE_COUNT);
@@ -101,6 +115,7 @@ public class TraceFilter implements Filter {
                                 channel.setAttribute(TRACE_COUNT, c);
                             }
                             count = c.getAndIncrement();
+                            //当前trace周期
                             if (count < max) {
                                 String prompt = channel.getUrl().getParameter(Constants.PROMPT_KEY, Constants.DEFAULT_PROMPT);
                                 channel.send("\r\n" + RpcContext.getContext().getRemoteAddress() + " -> "
@@ -110,6 +125,7 @@ public class TraceFilter implements Filter {
                                         + "\r\nelapsed: " + (end - start) + " ms."
                                         + "\r\n\r\n" + prompt);
                             }
+                            //新的一轮trace周期
                             if (count >= max - 1) {
                                 channels.remove(channel);
                             }

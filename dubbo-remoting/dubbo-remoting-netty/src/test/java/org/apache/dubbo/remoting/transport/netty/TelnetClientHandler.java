@@ -26,10 +26,19 @@ import org.apache.dubbo.remoting.exchange.support.Replier;
  */
 public class TelnetClientHandler implements Replier<String> {
 
+    /**
+     * @return
+     */
     public Class<String> interest() {
         return String.class;
     }
 
+    /**
+     * @param channel
+     * @param msg
+     * @return
+     * @throws RemotingException
+     */
     public Object reply(ExchangeChannel channel, String msg) throws RemotingException {
         return msg;
     }

@@ -271,6 +271,10 @@ public /**final**/ class URL implements Serializable {
         }
     }
 
+    /**
+     * @param value
+     * @return
+     */
     public static String decode(String value) {
         if (value == null || value.length() == 0) {
             return "";
@@ -427,10 +431,19 @@ public /**final**/ class URL implements Serializable {
         return parameters;
     }
 
+    /**
+     * @param key
+     * @return
+     */
     public String getParameterAndDecoded(String key) {
         return getParameterAndDecoded(key, null);
     }
 
+    /**
+     * @param key
+     * @param defaultValue
+     * @return
+     */
     public String getParameterAndDecoded(String key, String defaultValue) {
         return decode(getParameter(key, defaultValue));
     }

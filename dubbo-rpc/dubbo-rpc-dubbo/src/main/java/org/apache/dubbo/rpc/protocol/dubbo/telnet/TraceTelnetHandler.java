@@ -30,6 +30,7 @@ import java.lang.reflect.Method;
 
 /**
  * TraceTelnetHandler
+ * 基于telnet服务追踪器
  */
 @Activate
 @Help(parameter = "[service] [method] [times]", summary = "Trace the service.", detail = "Trace the service.")

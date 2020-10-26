@@ -64,6 +64,9 @@ public class DubboProtocol extends AbstractProtocol {
     public static final String NAME = "dubbo";
 
     public static final int DEFAULT_PORT = 20880;
+    /**
+     * 服务回调
+     */
     private static final String IS_CALLBACK_SERVICE_INVOKE = "_isCallBackServiceInvoke";
     /**
      *
@@ -99,6 +102,13 @@ public class DubboProtocol extends AbstractProtocol {
      */
     private ExchangeHandler requestHandler = new ExchangeHandlerAdapter() {
 
+        /**
+         * 相应请求，异步则异步调用，否则同步调用
+         * @param channel
+         * @param message
+         * @return
+         * @throws RemotingException
+         */
         @Override
         public CompletableFuture<Object> reply(ExchangeChannel channel, Object message) throws RemotingException {
             if (message instanceof Invocation) {
@@ -127,6 +137,7 @@ public class DubboProtocol extends AbstractProtocol {
                         return null;
                     }
                 }
+                //where to user and AsyncContextImpl？？
                 RpcContext rpcContext = RpcContext.getContext();
                 boolean supportServerAsync = invoker.getUrl().getMethodParameter(inv.getMethodName(), Constants.ASYNC_KEY, false);
                 if (supportServerAsync) {
@@ -134,11 +145,14 @@ public class DubboProtocol extends AbstractProtocol {
                     rpcContext.setAsyncContext(new AsyncContextImpl(future));
                 }
                 rpcContext.setRemoteAddress(channel.getRemoteAddress());
+                //调用方法
                 Result result = invoker.invoke(inv);
 
                 if (result instanceof AsyncRpcResult) {
+                    //异步调用
                     return ((AsyncRpcResult) result).getResultFuture().thenApply(r -> (Object) r);
                 } else {
+                    //同步调用
                     return CompletableFuture.completedFuture(result);
                 }
             }
@@ -195,6 +209,7 @@ public class DubboProtocol extends AbstractProtocol {
             if (method == null || method.length() == 0) {
                 return null;
             }
+            //路径，分组，接口，版本
             RpcInvocation invocation = new RpcInvocation(method, new Class<?>[0], new Object[0]);
             invocation.setAttachment(Constants.PATH_KEY, url.getPath());
             invocation.setAttachment(Constants.GROUP_KEY, url.getParameter(Constants.GROUP_KEY));
@@ -385,6 +400,10 @@ public class DubboProtocol extends AbstractProtocol {
         return server;
     }
 
+    /**
+     * @param url
+     * @throws RpcException
+     */
     private void optimizeSerialization(URL url) throws RpcException {
         String className = url.getParameter(Constants.OPTIMIZER_KEY, "");
         if (StringUtils.isEmpty(className) || optimizers.contains(className)) {
