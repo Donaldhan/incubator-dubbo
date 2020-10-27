@@ -113,6 +113,7 @@ public class InternalThreadLocal<V> {
 
     /**
      * Returns the current value for the current thread
+     * @return
      */
     @SuppressWarnings("unchecked")
     public final V get() {
@@ -125,6 +126,10 @@ public class InternalThreadLocal<V> {
         return initialize(threadLocalMap);
     }
 
+    /**
+     * @param threadLocalMap
+     * @return
+     */
     private V initialize(InternalThreadLocalMap threadLocalMap) {
         V v = null;
         try {
