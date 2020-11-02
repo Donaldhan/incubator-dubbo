@@ -35,10 +35,20 @@ import java.util.concurrent.ConcurrentHashMap;
 @io.netty.channel.ChannelHandler.Sharable
 public class NettyServerHandler extends ChannelDuplexHandler {
 
-    private final Map<String, Channel> channels = new ConcurrentHashMap<String, Channel>(); // <ip:port, channel>
+    /**
+     * 服务端handler
+     * <ip:port, channel>
+     */
+    private final Map<String, Channel> channels = new ConcurrentHashMap<String, Channel>();
 
+    /**
+     *
+     */
     private final URL url;
 
+    /**
+     *
+     */
     private final ChannelHandler handler;
 
     public NettyServerHandler(URL url, ChannelHandler handler) {

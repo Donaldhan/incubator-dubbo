@@ -90,6 +90,9 @@ public class Response {
 
     private String mErrorMsg;
 
+    /**
+     * 相应结果
+     */
     private Object mResult;
 
     public Response() {

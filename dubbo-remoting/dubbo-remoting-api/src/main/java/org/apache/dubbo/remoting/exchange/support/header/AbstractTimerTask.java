@@ -54,6 +54,10 @@ public abstract class AbstractTimerTask implements TimerTask {
         return System.currentTimeMillis();
     }
 
+    /**
+     * @param timeout
+     * @param tick
+     */
     private void reput(Timeout timeout, Long tick) {
         if (timeout == null || tick == null) {
             throw new IllegalArgumentException();
@@ -79,8 +83,14 @@ public abstract class AbstractTimerTask implements TimerTask {
         reput(timeout, tick);
     }
 
+    /**
+     * @param channel
+     */
     protected abstract void doTask(Channel channel);
 
+    /**
+     *
+     */
     interface ChannelProvider {
         Collection<Channel> getChannels();
     }

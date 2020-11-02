@@ -623,6 +623,9 @@ public class HashedWheelTimer implements Timer {
             return STATE_UPDATER.compareAndSet(this, expected, state);
         }
 
+        /**
+         * @return
+         */
         public int state() {
             return state;
         }
@@ -637,6 +640,9 @@ public class HashedWheelTimer implements Timer {
             return state() == ST_EXPIRED;
         }
 
+        /**
+         *
+         */
         public void expire() {
             if (!compareAndSetState(ST_INIT, ST_EXPIRED)) {
                 return;

@@ -41,6 +41,9 @@ public class Request {
 
     private boolean mBroken = false;
 
+    /**
+     * 请求数据
+     */
     private Object mData;
 
     public Request() {

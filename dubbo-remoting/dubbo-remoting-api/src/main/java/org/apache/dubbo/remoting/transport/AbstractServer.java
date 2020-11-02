@@ -39,12 +39,30 @@ import java.util.concurrent.ThreadPoolExecutor;
  */
 public abstract class AbstractServer extends AbstractEndpoint implements Server {
 
+    /**
+     * netty服务端线程池
+     */
     protected static final String SERVER_THREAD_POOL_NAME = "DubboServerHandler";
     private static final Logger logger = LoggerFactory.getLogger(AbstractServer.class);
+    /**
+     *
+     */
     ExecutorService executor;
+    /**
+     *
+     */
     private InetSocketAddress localAddress;
+    /**
+     * 绑定地址
+     */
     private InetSocketAddress bindAddress;
+    /**
+     *
+     */
     private int accepts;
+    /**
+     *
+     */
     private int idleTimeout;
 
     public AbstractServer(URL url, ChannelHandler handler) throws RemotingException {

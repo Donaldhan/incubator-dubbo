@@ -157,6 +157,14 @@ public class TelnetCodec extends TransportCodec {
         return decode(channel, buffer, readable, message);
     }
 
+    /**
+     * @param channel
+     * @param buffer
+     * @param readable
+     * @param message
+     * @return
+     * @throws IOException
+     */
     @SuppressWarnings("unchecked")
     protected Object decode(Channel channel, ChannelBuffer buffer, int readable, byte[] message) throws IOException {
         if (isClientSide(channel)) {

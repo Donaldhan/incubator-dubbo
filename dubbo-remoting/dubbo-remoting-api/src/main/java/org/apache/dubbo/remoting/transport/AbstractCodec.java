@@ -47,10 +47,18 @@ public abstract class AbstractCodec implements Codec2 {
         }
     }
 
+    /**
+     * @param channel
+     * @return
+     */
     protected Serialization getSerialization(Channel channel) {
         return CodecSupport.getSerialization(channel.getUrl());
     }
 
+    /**
+     * @param channel
+     * @return
+     */
     protected boolean isClientSide(Channel channel) {
         String side = (String) channel.getAttribute(Constants.SIDE_KEY);
         if ("client".equals(side)) {
@@ -70,6 +78,10 @@ public abstract class AbstractCodec implements Codec2 {
         }
     }
 
+    /**
+     * @param channel
+     * @return
+     */
     protected boolean isServerSide(Channel channel) {
         return !isClientSide(channel);
     }

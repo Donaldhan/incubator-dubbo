@@ -34,7 +34,13 @@ import java.util.Set;
 public class CodecSupport {
 
     private static final Logger logger = LoggerFactory.getLogger(CodecSupport.class);
+    /**
+     *
+     */
     private static Map<Byte, Serialization> ID_SERIALIZATION_MAP = new HashMap<Byte, Serialization>();
+    /**
+     *
+     */
     private static Map<Byte, String> ID_SERIALIZATIONNAME_MAP = new HashMap<Byte, String>();
 
     static {
@@ -61,6 +67,10 @@ public class CodecSupport {
         return ID_SERIALIZATION_MAP.get(id);
     }
 
+    /**
+     * @param url
+     * @return
+     */
     public static Serialization getSerialization(URL url) {
         return ExtensionLoader.getExtensionLoader(Serialization.class).getExtension(
                 url.getParameter(Constants.SERIALIZATION_KEY, Constants.DEFAULT_REMOTING_SERIALIZATION));

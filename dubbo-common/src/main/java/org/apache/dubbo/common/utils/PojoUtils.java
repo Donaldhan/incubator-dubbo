@@ -196,6 +196,12 @@ public class PojoUtils {
         return realize0(pojo, type, null, new IdentityHashMap<Object, Object>());
     }
 
+    /**
+     * @param pojo
+     * @param type
+     * @param genericType
+     * @return
+     */
     public static Object realize(Object pojo, Class<?> type, Type genericType) {
         return realize0(pojo, type, genericType, new IdentityHashMap<Object, Object>());
     }

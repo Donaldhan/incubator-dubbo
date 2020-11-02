@@ -77,6 +77,9 @@ public class HeaderExchangeServer implements ExchangeServer {
         return server.isClosed();
     }
 
+    /**
+     * @return
+     */
     private boolean isRunning() {
         Collection<Channel> channels = getChannels();
         for (Channel channel : channels) {
@@ -108,6 +111,7 @@ public class HeaderExchangeServer implements ExchangeServer {
             if (getUrl().getParameter(Constants.CHANNEL_SEND_READONLYEVENT_KEY, true)) {
                 sendChannelReadOnlyEvent();
             }
+            //自旋超时
             while (HeaderExchangeServer.this.isRunning()
                     && System.currentTimeMillis() - start < max) {
                 try {
@@ -144,6 +148,9 @@ public class HeaderExchangeServer implements ExchangeServer {
         }
     }
 
+    /**
+     *
+     */
     private void doClose() {
         if (!closed.compareAndSet(false, true)) {
             return;
@@ -259,6 +266,9 @@ public class HeaderExchangeServer implements ExchangeServer {
         }
     }
 
+    /**
+     *
+     */
     private void startHeartbeatTimer() {
         long tickDuration = calculateLeastDuration(heartbeat);
         heartbeatTimer = new HashedWheelTimer(new NamedThreadFactory("dubbo-server-heartbeat", true), tickDuration,
@@ -268,7 +278,9 @@ public class HeaderExchangeServer implements ExchangeServer {
 
         long heartbeatTick = calculateLeastDuration(heartbeat);
         long heartbeatTimeoutTick = calculateLeastDuration(heartbeatTimeout);
+        //心跳定时钟
         HeartbeatTimerTask heartBeatTimerTask = new HeartbeatTimerTask(cp, heartbeatTick, heartbeat);
+        //重连定时钟
         ReconnectTimerTask reconnectTimerTask = new ReconnectTimerTask(cp, heartbeatTimeoutTick, heartbeatTimeout);
 
         // init task and start timer.
@@ -276,6 +288,9 @@ public class HeaderExchangeServer implements ExchangeServer {
         heartbeatTimer.newTimeout(reconnectTimerTask, heartbeatTimeoutTick, TimeUnit.MILLISECONDS);
     }
 
+    /**
+     *
+     */
     private void stopHeartbeatTimer() {
         if (heartbeatTimer != null) {
             heartbeatTimer.stop();

@@ -26,6 +26,9 @@ import java.io.OutputStream;
 
 public class NativeJavaObjectOutput implements ObjectOutput {
 
+    /**
+     *
+     */
     private final ObjectOutputStream outputStream;
 
     public NativeJavaObjectOutput(OutputStream os) throws IOException {

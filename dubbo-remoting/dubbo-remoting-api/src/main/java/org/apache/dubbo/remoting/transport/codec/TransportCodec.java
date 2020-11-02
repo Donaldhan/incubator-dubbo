@@ -57,18 +57,40 @@ public class TransportCodec extends AbstractCodec {
         return object;
     }
 
+    /**
+     * @param channel
+     * @param output
+     * @param message
+     * @throws IOException
+     */
     protected void encodeData(Channel channel, ObjectOutput output, Object message) throws IOException {
         encodeData(output, message);
     }
 
+    /**
+     * @param channel
+     * @param input
+     * @return
+     * @throws IOException
+     */
     protected Object decodeData(Channel channel, ObjectInput input) throws IOException {
         return decodeData(input);
     }
 
+    /**
+     * @param output
+     * @param message
+     * @throws IOException
+     */
     protected void encodeData(ObjectOutput output, Object message) throws IOException {
         output.writeObject(message);
     }
 
+    /**
+     * @param input
+     * @return
+     * @throws IOException
+     */
     protected Object decodeData(ObjectInput input) throws IOException {
         try {
             return input.readObject();

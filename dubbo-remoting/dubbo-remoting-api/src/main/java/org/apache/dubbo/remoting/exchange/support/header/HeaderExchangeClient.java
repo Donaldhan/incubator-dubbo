@@ -178,6 +178,9 @@ public class HeaderExchangeClient implements ExchangeClient {
         return channel.hasAttribute(key);
     }
 
+    /**
+     *
+     */
     private void startHeartbeatTimer() {
         AbstractTimerTask.ChannelProvider cp = () -> Collections.singletonList(HeaderExchangeClient.this);
 
@@ -191,6 +194,9 @@ public class HeaderExchangeClient implements ExchangeClient {
         heartbeatTimer.newTimeout(reconnectTimerTask, heartbeatTimeoutTick, TimeUnit.MILLISECONDS);
     }
 
+    /**
+     *
+     */
     private void stopHeartbeatTimer() {
         if (heartbeatTimer != null) {
             heartbeatTimer.stop();
@@ -198,6 +204,9 @@ public class HeaderExchangeClient implements ExchangeClient {
         }
     }
 
+    /**
+     *
+     */
     private void doClose() {
         stopHeartbeatTimer();
     }

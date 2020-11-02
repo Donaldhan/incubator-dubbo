@@ -44,6 +44,7 @@ public class ReconnectTimerTask extends AbstractTimerTask {
             if (lastRead != null && now - lastRead > heartbeatTimeout) {
                 logger.warn("Close channel " + channel + ", because heartbeat read idle time out: "
                         + heartbeatTimeout + "ms");
+                //如果通道是客户端，则重新连接，否则关闭通道
                 if (channel instanceof Client) {
                     try {
                         ((Client) channel).reconnect();
