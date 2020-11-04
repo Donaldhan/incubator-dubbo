@@ -50,6 +50,13 @@ class CallbackServiceCodec {
     private static final byte CALLBACK_DESTROY = 0x2;
     private static final String INV_ATT_CALLBACK_KEY = "sys_callback_arg-";
 
+    /**
+     * 是否为回调
+     * @param url
+     * @param methodName
+     * @param argIndex
+     * @return
+     */
     private static byte isCallBack(URL url, String methodName, int argIndex) {
         // parameter callback rule: method-name.parameter-index(starting from 0).callback
         byte isCallback = CALLBACK_NONE;
@@ -127,8 +134,14 @@ class CallbackServiceCodec {
 
     /**
      * refer or destroy callback service on server side
-     *
+     * 服务端的服务销毁回调
+     * @param channel
      * @param url
+     * @param clazz
+     * @param inv
+     * @param instid
+     * @param isRefer 是否引用
+     * @return
      */
     @SuppressWarnings("unchecked")
     private static Object referOrDestroyCallbackService(Channel channel, URL url, Class<?> clazz, Invocation inv, int instid, boolean isRefer) {
@@ -148,9 +161,8 @@ class CallbackServiceCodec {
                     channel.setAttribute(proxyCacheKey, proxy);
                     channel.setAttribute(invokerCacheKey, invoker);
                     increaseInstanceCount(channel, countkey);
-
                     //convert error fail fast .
-                    //ignore concurrent problem.
+                    //ignore concurrent problem. 创建回调，并添加到回调Invokers集
                     Set<Invoker<?>> callbackInvokers = (Set<Invoker<?>>) channel.getAttribute(Constants.CHANNEL_CALLBACK_KEY);
                     if (callbackInvokers == null) {
                         callbackInvokers = new ConcurrentHashSet<Invoker<?>>(1);
@@ -168,6 +180,7 @@ class CallbackServiceCodec {
                     if (callbackInvokers != null) {
                         callbackInvokers.remove(invoker);
                     }
+                    //销毁invoker
                     invoker.destroy();
                 } catch (Exception e) {
                     logger.error(e.getMessage(), e);
@@ -262,6 +275,15 @@ class CallbackServiceCodec {
         }
     }
 
+    /**
+     * @param channel
+     * @param inv
+     * @param pts
+     * @param paraIndex
+     * @param inObject
+     * @return
+     * @throws IOException
+     */
     public static Object decodeInvocationArgument(Channel channel, RpcInvocation inv, Class<?>[] pts, int paraIndex, Object inObject) throws IOException {
         // if it's a callback, create proxy on client side, callback interface on client side can be invoked through channel
         // need get URL from channel and env when decode
@@ -276,10 +298,12 @@ class CallbackServiceCodec {
         }
         byte callbackstatus = isCallBack(url, inv.getMethodName(), paraIndex);
         switch (callbackstatus) {
+            //非回调
             case CallbackServiceCodec.CALLBACK_NONE:
                 return inObject;
             case CallbackServiceCodec.CALLBACK_CREATE:
                 try {
+                    //创建回调服务
                     return referOrDestroyCallbackService(channel, url, pts[paraIndex], inv, Integer.parseInt(inv.getAttachment(INV_ATT_CALLBACK_KEY + paraIndex)), true);
                 } catch (Exception e) {
                     logger.error(e.getMessage(), e);
@@ -287,6 +311,7 @@ class CallbackServiceCodec {
                 }
             case CallbackServiceCodec.CALLBACK_DESTROY:
                 try {
+                    //销毁回调服务
                     return referOrDestroyCallbackService(channel, url, pts[paraIndex], inv, Integer.parseInt(inv.getAttachment(INV_ATT_CALLBACK_KEY + paraIndex)), false);
                 } catch (Exception e) {
                     throw new IOException(StringUtils.toString(e));

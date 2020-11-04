@@ -47,6 +47,9 @@ public class MinaServer extends AbstractServer {
 
     private static final Logger logger = LoggerFactory.getLogger(MinaServer.class);
 
+    /**
+     *
+     */
     private SocketAcceptor acceptor;
 
     public MinaServer(URL url, ChannelHandler handler) throws RemotingException {

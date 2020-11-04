@@ -49,16 +49,19 @@ import java.io.InputStream;
  */
 public class ExchangeCodec extends TelnetCodec {
 
-    // header length.
+    // header length. 头部长度
     protected static final int HEADER_LENGTH = 16;
-    // magic header.
+    // magic header. 魔数头部
     protected static final short MAGIC = (short) 0xdabb;
     protected static final byte MAGIC_HIGH = Bytes.short2bytes(MAGIC)[0];
     protected static final byte MAGIC_LOW = Bytes.short2bytes(MAGIC)[1];
-    // message flag.
+    // message flag. 消息标志
     protected static final byte FLAG_REQUEST = (byte) 0x80;
     protected static final byte FLAG_TWOWAY = (byte) 0x40;
     protected static final byte FLAG_EVENT = (byte) 0x20;
+    /**
+     * 序列化掩码
+     */
     protected static final int SERIALIZATION_MASK = 0x1f;
     private static final Logger logger = LoggerFactory.getLogger(ExchangeCodec.class);
 
@@ -402,6 +405,12 @@ public class ExchangeCodec extends TelnetCodec {
         return decodeRequestData(channel, in);
     }
 
+    /**
+     * @param channel
+     * @param in
+     * @return
+     * @throws IOException
+     */
     protected Object decodeEventData(Channel channel, ObjectInput in) throws IOException {
         try {
             return in.readObject();
@@ -410,6 +419,12 @@ public class ExchangeCodec extends TelnetCodec {
         }
     }
 
+    /**
+     * @param channel
+     * @param in
+     * @return
+     * @throws IOException
+     */
     @Deprecated
     protected Object decodeHeartbeatData(Channel channel, ObjectInput in) throws IOException {
         try {

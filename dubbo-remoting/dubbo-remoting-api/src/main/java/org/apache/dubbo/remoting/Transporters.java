@@ -36,6 +36,12 @@ public class Transporters {
     private Transporters() {
     }
 
+    /**
+     * @param url
+     * @param handler
+     * @return
+     * @throws RemotingException
+     */
     public static Server bind(String url, ChannelHandler... handler) throws RemotingException {
         return bind(URL.valueOf(url), handler);
     }

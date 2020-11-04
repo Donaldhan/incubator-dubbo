@@ -418,7 +418,7 @@ public class Bytes {
 
     /**
      * from hex string.
-     *
+     * 从十六进制字符串转换为字节
      * @param str hex string.
      * @return byte array.
      */

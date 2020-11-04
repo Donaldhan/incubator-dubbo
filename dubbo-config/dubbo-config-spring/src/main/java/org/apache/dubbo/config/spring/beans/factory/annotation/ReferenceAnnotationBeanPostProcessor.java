@@ -364,8 +364,14 @@ public class ReferenceAnnotationBeanPostProcessor extends InstantiationAwareBean
      */
     private class ReferenceFieldElement extends InjectionMetadata.InjectedElement {
 
+        /**
+         *
+         */
         private final Field field;
 
+        /**
+         *
+         */
         private final Reference reference;
 
         private volatile ReferenceBean<?> referenceBean;

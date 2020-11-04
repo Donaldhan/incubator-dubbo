@@ -98,10 +98,19 @@ public final class ReflectUtils {
 
     public static final String JAVA_NAME_REGEX = "(?:" + JAVA_IDENT_REGEX + "(?:\\." + JAVA_IDENT_REGEX + ")*)";
 
+    /**
+     *
+     */
     public static final String CLASS_DESC = "(?:L" + JAVA_IDENT_REGEX + "(?:\\/" + JAVA_IDENT_REGEX + ")*;)";
 
+    /**
+     *
+     */
     public static final String ARRAY_DESC = "(?:\\[+(?:(?:[VZBCDFIJS])|" + CLASS_DESC + "))";
 
+    /**
+     *
+     */
     public static final String DESC_REGEX = "(?:(?:[VZBCDFIJS])|" + CLASS_DESC + "|" + ARRAY_DESC + ")";
 
     public static final Pattern DESC_PATTERN = Pattern.compile(DESC_REGEX);
@@ -761,7 +770,7 @@ public final class ReflectUtils {
      * desc to class.
      * "[Z" => boolean[].class
      * "[[Ljava/util/Map;" => java.util.Map[][].class
-     *
+     * 解析描述为对象
      * @param cl   ClassLoader instance.
      * @param desc desc.
      * @return Class instance.
@@ -822,7 +831,7 @@ public final class ReflectUtils {
 
     /**
      * get class array instance.
-     *
+     * 获取对象数组实例
      * @param cl   ClassLoader instance.
      * @param desc desc.
      * @return Class[] class array.

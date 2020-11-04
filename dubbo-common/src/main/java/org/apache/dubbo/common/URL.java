@@ -859,6 +859,12 @@ public /**final**/ class URL implements Serializable {
         return value.charAt(0);
     }
 
+    /**
+     * @param method
+     * @param key
+     * @param defaultValue
+     * @return
+     */
     public boolean getMethodParameter(String method, String key, boolean defaultValue) {
         String value = getMethodParameter(method, key);
         if (value == null || value.length() == 0) {

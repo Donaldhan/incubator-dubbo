@@ -38,6 +38,9 @@ final class MinaChannel extends AbstractChannel {
 
     private static final String CHANNEL_KEY = MinaChannel.class.getName() + ".CHANNEL";
 
+    /**
+     *
+     */
     private final IoSession session;
 
     private MinaChannel(IoSession session, URL url, ChannelHandler handler) {

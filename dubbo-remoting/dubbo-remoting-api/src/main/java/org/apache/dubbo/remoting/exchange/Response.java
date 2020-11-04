@@ -21,8 +21,14 @@ package org.apache.dubbo.remoting.exchange;
  */
 public class Response {
 
+    /**
+     * 心跳事件
+     */
     public static final String HEARTBEAT_EVENT = null;
 
+    /**
+     *
+     */
     public static final String READONLY_EVENT = "R";
 
     /**

@@ -44,14 +44,23 @@ import java.util.concurrent.locks.ReentrantLock;
  */
 public class DubboInvoker<T> extends AbstractInvoker<T> {
 
+    /**
+     *
+     */
     private final ExchangeClient[] clients;
 
+    /**
+     *
+     */
     private final AtomicPositiveInteger index = new AtomicPositiveInteger();
 
     private final String version;
 
     private final ReentrantLock destroyLock = new ReentrantLock();
 
+    /**
+     *
+     */
     private final Set<Invoker<?>> invokers;
 
     public DubboInvoker(Class<T> serviceType, URL url, ExchangeClient[] clients) {
@@ -104,6 +113,7 @@ public class DubboInvoker<T> extends AbstractInvoker<T> {
                 }
                 return result;
             } else {
+                //同步请求
                 RpcContext.getContext().setFuture(null);
                 return (Result) currentClient.request(inv, timeout).get();
             }
