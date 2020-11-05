@@ -781,6 +781,9 @@ public class ServiceConfig<T> extends AbstractServiceConfig {
         appendProperties(provider);
     }
 
+    /**
+     *
+     */
     private void checkProtocol() {
         if ((protocols == null || protocols.isEmpty())
                 && provider != null) {
