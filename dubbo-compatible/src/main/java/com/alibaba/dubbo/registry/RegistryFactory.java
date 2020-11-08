@@ -23,6 +23,10 @@ import org.apache.dubbo.registry.Registry;
 @Deprecated
 public interface RegistryFactory extends org.apache.dubbo.registry.RegistryFactory {
 
+    /**
+     * @param url
+     * @return
+     */
     Registry getRegistry(com.alibaba.dubbo.common.URL url);
 
     @Override

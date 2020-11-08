@@ -33,7 +33,7 @@ public interface RouterFactory {
 
     /**
      * Create router.
-     *
+     * 创建协议路由
      * @param url
      * @return router
      */

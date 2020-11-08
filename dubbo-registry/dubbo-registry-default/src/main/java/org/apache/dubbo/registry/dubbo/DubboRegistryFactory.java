@@ -41,10 +41,23 @@ import java.util.List;
  */
 public class DubboRegistryFactory extends AbstractRegistryFactory {
 
+    /**
+     *
+     */
     private Protocol protocol;
+    /**
+     *
+     */
     private ProxyFactory proxyFactory;
+    /**
+     *
+     */
     private Cluster cluster;
 
+    /**
+     * @param url
+     * @return
+     */
     private static URL getRegistryURL(URL url) {
         return url.setPath(RegistryService.class.getName())
                 .removeParameter(Constants.EXPORT_KEY).removeParameter(Constants.REFER_KEY)
@@ -75,6 +88,10 @@ public class DubboRegistryFactory extends AbstractRegistryFactory {
         this.cluster = cluster;
     }
 
+    /**
+     * @param url
+     * @return
+     */
     @Override
     public Registry createRegistry(URL url) {
         url = getRegistryURL(url);
@@ -87,7 +104,9 @@ public class DubboRegistryFactory extends AbstractRegistryFactory {
                 urls.add(url.setAddress(address));
             }
         }
+        //构造注册目录（服务） TODO
         RegistryDirectory<RegistryService> directory = new RegistryDirectory<RegistryService>(RegistryService.class, url.addParameter(Constants.INTERFACE_KEY, RegistryService.class.getName()).addParameterAndEncoded(Constants.REFER_KEY, url.toParameterString()));
+        //
         Invoker<RegistryService> registryInvoker = cluster.join(directory);
         RegistryService registryService = proxyFactory.getProxy(registryInvoker);
         DubboRegistry registry = new DubboRegistry(registryInvoker, registryService);

@@ -34,7 +34,7 @@ public interface Cluster {
 
     /**
      * Merge the directory invokers to a virtual invoker.
-     *
+     * 合并服务目录到一个虚拟服务
      * @param <T>
      * @param directory
      * @return cluster invoker

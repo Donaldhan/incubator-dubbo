@@ -24,11 +24,18 @@ import org.apache.dubbo.rpc.RpcException;
 
 /**
  * InvokerWrapper
+ * @param <T>
  */
 public class InvokerWrapper<T> implements Invoker<T> {
 
+    /**
+     * 服务提供者
+     */
     private final Invoker<T> invoker;
 
+    /**
+     * 提供服务地址
+     */
     private final URL url;
 
     public InvokerWrapper(Invoker<T> invoker, URL url) {

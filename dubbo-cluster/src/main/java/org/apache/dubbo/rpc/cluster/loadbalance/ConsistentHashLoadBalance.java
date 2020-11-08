@@ -33,7 +33,7 @@ import java.util.concurrent.ConcurrentMap;
 
 /**
  * ConsistentHashLoadBalance
- *
+ * 一致性hash负载均衡
  */
 public class ConsistentHashLoadBalance extends AbstractLoadBalance {
     public static final String NAME = "consistenthash";
@@ -58,16 +58,28 @@ public class ConsistentHashLoadBalance extends AbstractLoadBalance {
 
         private final TreeMap<Long, Invoker<T>> virtualInvokers;
 
+        /**
+         *
+         */
         private final int replicaNumber;
 
+        /**
+         *
+         */
         private final int identityHashCode;
 
         private final int[] argumentIndex;
 
+        /**
+         * @param invokers
+         * @param methodName
+         * @param identityHashCode
+         */
         ConsistentHashSelector(List<Invoker<T>> invokers, String methodName, int identityHashCode) {
             this.virtualInvokers = new TreeMap<Long, Invoker<T>>();
             this.identityHashCode = identityHashCode;
             URL url = invokers.get(0).getUrl();
+            //一致性hash虚拟节点扩展数
             this.replicaNumber = url.getMethodParameter(methodName, "hash.nodes", 160);
             String[] index = Constants.COMMA_SPLIT_PATTERN.split(url.getMethodParameter(methodName, "hash.arguments", "0"));
             argumentIndex = new int[index.length];
@@ -86,12 +98,20 @@ public class ConsistentHashLoadBalance extends AbstractLoadBalance {
             }
         }
 
+        /**
+         * @param invocation
+         * @return
+         */
         public Invoker<T> select(Invocation invocation) {
             String key = toKey(invocation.getArguments());
             byte[] digest = md5(key);
             return selectForKey(hash(digest, 0));
         }
 
+        /**
+         * @param args
+         * @return
+         */
         private String toKey(Object[] args) {
             StringBuilder buf = new StringBuilder();
             for (int i : argumentIndex) {
@@ -102,6 +122,10 @@ public class ConsistentHashLoadBalance extends AbstractLoadBalance {
             return buf.toString();
         }
 
+        /**
+         * @param hash
+         * @return
+         */
         private Invoker<T> selectForKey(long hash) {
             Map.Entry<Long, Invoker<T>> entry = virtualInvokers.ceilingEntry(hash);
             if (entry == null) {

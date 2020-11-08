@@ -62,12 +62,23 @@ public class RegistryProtocol implements Protocol {
     private final static Logger logger = LoggerFactory.getLogger(RegistryProtocol.class);
     private static RegistryProtocol INSTANCE;
     private final Map<URL, NotifyListener> overrideListeners = new ConcurrentHashMap<URL, NotifyListener>();
-    //To solve the problem of RMI repeated exposure port conflicts, the services that have been exposed are no longer exposed.
-    //providerurl <--> exporter
+    /**
+     *To solve the problem of RMI repeated exposure port conflicts, the services that have been exposed are no longer exposed.
+     * providerurl <--> exporter
+     */
     private final Map<String, ExporterChangeableWrapper<?>> bounds = new ConcurrentHashMap<String, ExporterChangeableWrapper<?>>();
     private Cluster cluster;
+    /**
+     * 服务协议
+     */
     private Protocol protocol;
+    /**
+     * 注册器工厂
+     */
     private RegistryFactory registryFactory;
+    /**
+     *
+     */
     private ProxyFactory proxyFactory;
 
     public RegistryProtocol() {
@@ -138,11 +149,12 @@ public class RegistryProtocol implements Protocol {
     public <T> Exporter<T> export(final Invoker<T> originInvoker) throws RpcException {
         //export invoker
         final ExporterChangeableWrapper<T> exporter = doLocalExport(originInvoker);
-
+        //获取服务提供者的注册器URL
         URL registryUrl = getRegistryUrl(originInvoker);
 
-        //registry provider
+        //registry provider  TODO
         final Registry registry = getRegistry(originInvoker);
+        //获取服务提供者URL
         final URL registeredProviderUrl = getRegisteredProviderUrl(originInvoker);
 
         //to judge to delay publish whether or not
@@ -165,6 +177,11 @@ public class RegistryProtocol implements Protocol {
         return new DestroyableExporter<T>(exporter, originInvoker, overrideSubscribeUrl, registeredProviderUrl);
     }
 
+    /**
+     * @param originInvoker
+     * @param <T>
+     * @return
+     */
     @SuppressWarnings("unchecked")
     private <T> ExporterChangeableWrapper<T> doLocalExport(final Invoker<T> originInvoker) {
         String key = getCacheKey(originInvoker);
@@ -211,6 +228,20 @@ public class RegistryProtocol implements Protocol {
         return registryFactory.getRegistry(registryUrl);
     }
 
+    /**
+     * Boot
+     * //        @Bean
+     *     public RegistryConfig dubboRegistry() {
+     *         RegistryConfig registry = new RegistryConfig();
+     * //        registry.setAddress(environment.getProperty("zookeeper_server"));
+     *         registry.setAddress("zookeeper://127.0.0.1:2181");
+     *         return registry;
+     *     }
+     *
+     * <dubbo:registry address="zookeeper://10.20.153.10:2181?backup=10.20.153.11:2181,10.20.153.12:2181" />
+     * @param originInvoker
+     * @return
+     */
     private URL getRegistryUrl(Invoker<?> originInvoker) {
         URL registryUrl = originInvoker.getUrl();
         if (Constants.REGISTRY_PROTOCOL.equals(registryUrl.getProtocol())) {
@@ -223,7 +254,7 @@ public class RegistryProtocol implements Protocol {
 
     /**
      * Return the url that is registered to the registry and filter the url parameter once
-     *
+     * 获取服务提供者的地址
      * @param originInvoker
      * @return
      */
@@ -241,6 +272,10 @@ public class RegistryProtocol implements Protocol {
                 .removeParameter(INTERFACES);
     }
 
+    /**
+     * @param registedProviderUrl
+     * @return
+     */
     private URL getSubscribedOverrideUrl(URL registedProviderUrl) {
         return registedProviderUrl.setProtocol(Constants.PROVIDER_PROTOCOL)
                 .addParameters(Constants.CATEGORY_KEY, Constants.CONFIGURATORS_CATEGORY,
@@ -249,7 +284,7 @@ public class RegistryProtocol implements Protocol {
 
     /**
      * Get the address of the providerUrl through the url of the invoker
-     *
+     * 获取invoker的提供服务URL
      * @param origininvoker
      * @return
      */
@@ -331,6 +366,10 @@ public class RegistryProtocol implements Protocol {
         bounds.clear();
     }
 
+    /**
+     * 服务提供者代理
+     * @param <T>
+     */
     public static class InvokerDelegete<T> extends InvokerWrapper<T> {
         private final Invoker<T> invoker;
 
@@ -436,7 +475,7 @@ public class RegistryProtocol implements Protocol {
 
     /**
      * exporter proxy, establish the corresponding relationship between the returned exporter and the exporter exported by the protocol, and can modify the relationship at the time of override.
-     *
+     * export包装类
      * @param <T>
      */
     private class ExporterChangeableWrapper<T> implements Exporter<T> {

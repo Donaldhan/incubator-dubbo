@@ -36,16 +36,16 @@ import java.util.concurrent.locks.ReentrantLock;
  * @see org.apache.dubbo.registry.RegistryFactory
  */
 public abstract class AbstractRegistryFactory implements RegistryFactory {
-
     // Log output
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractRegistryFactory.class);
-
-    // The lock for the acquisition process of the registry
+    /**
+     * The lock for the acquisition process of the registry
+     */
     private static final ReentrantLock LOCK = new ReentrantLock();
-
-    // Registry Collection Map<RegistryAddress, Registry>
+    /**
+     * Registry Collection Map<RegistryAddress, Registry>
+     */
     private static final Map<String, Registry> REGISTRIES = new HashMap<>();
-
     /**
      * Get all registries
      *
@@ -58,8 +58,9 @@ public abstract class AbstractRegistryFactory implements RegistryFactory {
     /**
      * Close all created registries
      * 关闭所有注册器
+     *
+     * 2017/8/30 to move somewhere else better
      */
-    // TODO: 2017/8/30 to move somewhere else better
     public static void destroyAll() {
         if (LOGGER.isInfoEnabled()) {
             LOGGER.info("Close all registries " + getRegistries());

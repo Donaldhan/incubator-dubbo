@@ -28,7 +28,7 @@ import java.util.List;
 
 /**
  * AvailableCluster
- *
+ * 可利用族
  */
 public class AvailableCluster implements Cluster {
 

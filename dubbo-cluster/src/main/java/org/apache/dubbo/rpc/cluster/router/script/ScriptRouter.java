@@ -45,8 +45,14 @@ public class ScriptRouter implements Router {
 
     private static final Logger logger = LoggerFactory.getLogger(ScriptRouter.class);
 
+    /**
+     *
+     */
     private static final Map<String, ScriptEngine> engines = new ConcurrentHashMap<String, ScriptEngine>();
 
+    /**
+     *
+     */
     private final ScriptEngine engine;
 
     private final int priority;

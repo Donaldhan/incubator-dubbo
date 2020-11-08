@@ -194,6 +194,13 @@ public class ConditionRouter implements Router {
         return !(thenCondition == null || thenCondition.isEmpty()) && matchCondition(thenCondition, url, param, null);
     }
 
+    /**
+     * @param condition
+     * @param url
+     * @param param
+     * @param invocation
+     * @return
+     */
     private boolean matchCondition(Map<String, MatchPair> condition, URL url, URL param, Invocation invocation) {
         Map<String, String> sample = url.toMap();
         boolean result = false;
@@ -227,6 +234,9 @@ public class ConditionRouter implements Router {
         return result;
     }
 
+    /**
+     *
+     */
     private static final class MatchPair {
         final Set<String> matches = new HashSet<String>();
         final Set<String> mismatches = new HashSet<String>();

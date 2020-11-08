@@ -44,6 +44,7 @@ import java.util.concurrent.TimeUnit;
  *
  * <a href="http://en.wikipedia.org/wiki/Failback">Failback</a>
  *
+ * @param <T>
  */
 public class FailbackClusterInvoker<T> extends AbstractClusterInvoker<T> {
 
@@ -65,6 +66,10 @@ public class FailbackClusterInvoker<T> extends AbstractClusterInvoker<T> {
         super(directory);
     }
 
+    /**
+     * @param invocation
+     * @param invoker
+     */
     private void addFailed(Invocation invocation, AbstractClusterInvoker<?> invoker) {
         if (retryFuture == null) {
             synchronized (this) {

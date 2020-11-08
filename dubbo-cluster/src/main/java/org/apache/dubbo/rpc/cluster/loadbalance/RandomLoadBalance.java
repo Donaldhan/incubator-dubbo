@@ -25,6 +25,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * random load balance.
+ * 随机服务均衡
  */
 public class RandomLoadBalance extends AbstractLoadBalance {
 
