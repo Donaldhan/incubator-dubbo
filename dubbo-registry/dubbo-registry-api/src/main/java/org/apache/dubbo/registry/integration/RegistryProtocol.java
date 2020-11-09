@@ -152,9 +152,9 @@ public class RegistryProtocol implements Protocol {
         //获取服务提供者的注册器URL
         URL registryUrl = getRegistryUrl(originInvoker);
 
-        //registry provider  TODO
+        //registry provider
         final Registry registry = getRegistry(originInvoker);
-        //获取服务提供者URL
+        //获取服务提供者URL TODO
         final URL registeredProviderUrl = getRegisteredProviderUrl(originInvoker);
 
         //to judge to delay publish whether or not

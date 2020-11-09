@@ -89,6 +89,10 @@ public abstract class AbstractRetryTask implements TimerTask {
         return cancel;
     }
 
+    /**
+     * @param timeout
+     * @param tick
+     */
     protected void reput(Timeout timeout, long tick) {
         if (timeout == null) {
             throw new IllegalArgumentException();

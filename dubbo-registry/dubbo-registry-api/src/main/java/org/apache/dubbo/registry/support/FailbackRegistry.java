@@ -69,19 +69,33 @@ public abstract class FailbackRegistry extends AbstractRegistry {
         retryTimer = new HashedWheelTimer(new NamedThreadFactory("DubboRegistryRetryTimer", true), retryPeriod, TimeUnit.MILLISECONDS, 128);
     }
 
+    /**
+     * @param url
+     */
     public void removeFailedRegisteredTask(URL url) {
         failedRegistered.remove(url);
     }
 
+    /**
+     * @param url
+     */
     public void removeFailedUnregisteredTask(URL url) {
         failedUnregistered.remove(url);
     }
 
+    /**
+     * @param url
+     * @param listener
+     */
     public void removeFailedSubscribedTask(URL url, NotifyListener listener) {
         Holder h = new Holder(url, listener);
         failedSubscribed.remove(h);
     }
 
+    /**
+     * @param url
+     * @param listener
+     */
     public void removeFailedUnsubscribedTask(URL url, NotifyListener listener) {
         Holder h = new Holder(url, listener);
         failedUnsubscribed.remove(h);
@@ -92,6 +106,9 @@ public abstract class FailbackRegistry extends AbstractRegistry {
         failedNotified.remove(h);
     }
 
+    /**
+     * @param url
+     */
     private void addFailedRegistered(URL url) {
         FailedRegisteredTask oldOne = failedRegistered.get(url);
         if (oldOne != null) {
@@ -105,6 +122,9 @@ public abstract class FailbackRegistry extends AbstractRegistry {
         }
     }
 
+    /**
+     * @param url
+     */
     private void removeFailedRegistered(URL url) {
         FailedRegisteredTask f = failedRegistered.remove(url);
         if (f != null) {
@@ -112,6 +132,9 @@ public abstract class FailbackRegistry extends AbstractRegistry {
         }
     }
 
+    /**
+     * @param url
+     */
     private void addFailedUnregistered(URL url) {
         FailedUnregisteredTask oldOne = failedUnregistered.get(url);
         if (oldOne != null) {
@@ -125,6 +148,9 @@ public abstract class FailbackRegistry extends AbstractRegistry {
         }
     }
 
+    /**
+     * @param url
+     */
     private void removeFailedUnregistered(URL url) {
         FailedUnregisteredTask f = failedUnregistered.remove(url);
         if (f != null) {
@@ -132,6 +158,10 @@ public abstract class FailbackRegistry extends AbstractRegistry {
         }
     }
 
+    /**
+     * @param url
+     * @param listener
+     */
     private void addFailedSubscribed(URL url, NotifyListener listener) {
         Holder h = new Holder(url, listener);
         FailedSubscribedTask oldOne = failedSubscribed.get(h);
@@ -365,7 +395,7 @@ public abstract class FailbackRegistry extends AbstractRegistry {
 
     @Override
     protected void recover() throws Exception {
-        // register
+        // register， 重新注册
         Set<URL> recoverRegistered = new HashSet<URL>(getRegistered());
         if (!recoverRegistered.isEmpty()) {
             if (logger.isInfoEnabled()) {
@@ -375,7 +405,7 @@ public abstract class FailbackRegistry extends AbstractRegistry {
                 addFailedRegistered(url);
             }
         }
-        // subscribe
+        // subscribe ，重新订阅
         Map<URL, Set<NotifyListener>> recoverSubscribed = new HashMap<URL, Set<NotifyListener>>(getSubscribed());
         if (!recoverSubscribed.isEmpty()) {
             if (logger.isInfoEnabled()) {
@@ -406,6 +436,9 @@ public abstract class FailbackRegistry extends AbstractRegistry {
 
     public abstract void doUnsubscribe(URL url, NotifyListener listener);
 
+    /**
+     *
+     */
     static class Holder {
 
         private final URL url;

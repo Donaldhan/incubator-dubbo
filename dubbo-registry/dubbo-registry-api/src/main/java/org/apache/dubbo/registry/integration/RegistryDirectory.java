@@ -67,34 +67,65 @@ public class RegistryDirectory<T> extends AbstractDirectory<T> implements Notify
     private static final RouterFactory routerFactory = ExtensionLoader.getExtensionLoader(RouterFactory.class).getAdaptiveExtension();
 
     private static final ConfiguratorFactory configuratorFactory = ExtensionLoader.getExtensionLoader(ConfiguratorFactory.class).getAdaptiveExtension();
-    private final String serviceKey; // Initialization at construction time, assertion not null
-    private final Class<T> serviceType; // Initialization at construction time, assertion not null
-    private final Map<String, String> queryMap; // Initialization at construction time, assertion not null
-    private final URL directoryUrl; // Initialization at construction time, assertion not null, and always assign non null value
+    /**
+     *  Initialization at construction time, assertion not null
+     */
+    private final String serviceKey;
+    /**
+     * Initialization at construction time, assertion not null
+     */
+    private final Class<T> serviceType;
+    /**
+     *  Initialization at construction time, assertion not null
+     */
+    private final Map<String, String> queryMap;
+    /**
+     * Initialization at construction time, assertion not null, and always assign non null value
+     */
+    private final URL directoryUrl;
     private final String[] serviceMethods;
     private final boolean multiGroup;
-    private Protocol protocol; // Initialization at the time of injection, the assertion is not null
-    private Registry registry; // Initialization at the time of injection, the assertion is not null
+    /**
+     * Initialization at the time of injection, the assertion is not null
+     */
+    private Protocol protocol;
+    /**
+     * Initialization at the time of injection, the assertion is not null
+     */
+    private Registry registry;
     private volatile boolean forbidden = false;
 
-    private volatile URL overrideDirectoryUrl; // Initialization at construction time, assertion not null, and always assign non null value
+    /**
+     *  Initialization at construction time, assertion not null, and always assign non null value
+     */
+    private volatile URL overrideDirectoryUrl;
 
     /**
      * override rules
      * Priority: override>-D>consumer>provider
      * Rule one: for a certain provider <ip:port,timeout=100>
      * Rule two: for all providers <* ,timeout=5000>
+     *     The initial value is null and the midway may be assigned to null, please use the local variable reference
      */
-    private volatile List<Configurator> configurators; // The initial value is null and the midway may be assigned to null, please use the local variable reference
+    private volatile List<Configurator> configurators;
 
-    // Map<url, Invoker> cache service url to invoker mapping.
-    private volatile Map<String, Invoker<T>> urlInvokerMap; // The initial value is null and the midway may be assigned to null, please use the local variable reference
+    /**
+     * Map<url, Invoker> cache service url to invoker mapping.
+     * The initial value is null and the midway may be assigned to null, please use the local variable reference
+     */
+    private volatile Map<String, Invoker<T>> urlInvokerMap;
 
-    // Map<methodName, Invoker> cache service method to invokers mapping.
-    private volatile Map<String, List<Invoker<T>>> methodInvokerMap; // The initial value is null and the midway may be assigned to null, please use the local variable reference
-
-    // Set<invokerUrls> cache invokeUrls to invokers mapping.
-    private volatile Set<URL> cachedInvokerUrls; // The initial value is null and the midway may be assigned to null, please use the local variable reference
+    /**
+     * Map<methodName, Invoker> cache service method to invokers mapping.
+     * The initial value is null and the midway may be assigned to null, please use the local variable reference
+     */
+    private volatile Map<String, List<Invoker<T>>> methodInvokerMap;
+    /**
+     * Set<invokerUrls> cache invokeUrls to invokers mapping.
+     * 缓存服务URL
+     * The initial value is null and the midway may be assigned to null, please use the local variable reference
+     */
+    private volatile Set<URL> cachedInvokerUrls;
 
     public RegistryDirectory(Class<T> serviceType, URL url) {
         super(url);
@@ -157,6 +188,10 @@ public class RegistryDirectory<T> extends AbstractDirectory<T> implements Notify
         this.registry = registry;
     }
 
+    /**
+     * 订阅服务 key point
+     * @param url
+     */
     public void subscribe(URL url) {
         setConsumerUrl(url);
         registry.subscribe(url, this);
@@ -167,7 +202,7 @@ public class RegistryDirectory<T> extends AbstractDirectory<T> implements Notify
         if (isDestroyed()) {
             return;
         }
-        // unsubscribe.
+        // unsubscribe. 取消订阅
         try {
             if (getConsumerUrl() != null && registry != null && registry.isAvailable()) {
                 registry.unsubscribe(getConsumerUrl(), this);
@@ -193,11 +228,14 @@ public class RegistryDirectory<T> extends AbstractDirectory<T> implements Notify
             String category = url.getParameter(Constants.CATEGORY_KEY, Constants.DEFAULT_CATEGORY);
             if (Constants.ROUTERS_CATEGORY.equals(category)
                     || Constants.ROUTE_PROTOCOL.equals(protocol)) {
+                //服务路由
                 routerUrls.add(url);
             } else if (Constants.CONFIGURATORS_CATEGORY.equals(category)
                     || Constants.OVERRIDE_PROTOCOL.equals(protocol)) {
+                //配置，重载协议
                 configuratorUrls.add(url);
             } else if (Constants.PROVIDERS_CATEGORY.equals(category)) {
+                //提供者
                 invokerUrls.add(url);
             } else {
                 logger.warn("Unsupported category " + category + " in notified url: " + url + " from registry " + getUrl().getAddress() + " to consumer " + NetUtils.getLocalHost());
@@ -222,25 +260,34 @@ public class RegistryDirectory<T> extends AbstractDirectory<T> implements Notify
                 this.overrideDirectoryUrl = configurator.configure(overrideDirectoryUrl);
             }
         }
-        // providers
+        // providers ， 刷新服务
         refreshInvoker(invokerUrls);
     }
 
     /**
      * Convert the invokerURL list to the Invoker Map. The rules of the conversion are as follows:
-     * 1.If URL has been converted to invoker, it is no longer re-referenced and obtained directly from the cache, and notice that any parameter changes in the URL will be re-referenced.
+     * 转换服务提供URL为MAP，规则如下：
+     * 1.If URL has been converted to invoker, it is no longer re-referenced and obtained directly from the cache,
+     * and notice that any parameter changes in the URL will be re-referenced.
+     * 如果URL已经转换为Invoker，不在重新索引，注解从缓存中获取，任务URL的参数改变，将会通知重新索引
      * 2.If the incoming invoker list is not empty, it means that it is the latest invoker list
-     * 3.If the list of incoming invokerUrl is empty, It means that the rule is only a override rule or a route rule, which needs to be re-contrasted to decide whether to re-reference.
-     *
+     * 如果invokerUrls，不为空，则为最近的服务List
+     * 3.If the list of incoming invokerUrl is empty, It means that the rule is only a override rule or a route rule,
+     * which needs to be re-contrasted to decide whether to re-reference.
+     * 如果服务提供者URL为空，则意味着，规则或路由规则重写，需要重新确定是否需要重新索引服务提供者
+     * 2017/8/31 FIXME The thread pool should be used to refresh the address, otherwise the task may be accumulated.
      * @param invokerUrls this parameter can't be null
      */
-    // TODO: 2017/8/31 FIXME The thread pool should be used to refresh the address, otherwise the task may be accumulated.
     private void refreshInvoker(List<URL> invokerUrls) {
         if (invokerUrls != null && invokerUrls.size() == 1 && invokerUrls.get(0) != null
                 && Constants.EMPTY_PROTOCOL.equals(invokerUrls.get(0).getProtocol())) {
-            this.forbidden = true; // Forbid to access
-            this.methodInvokerMap = null; // Set the method invoker map to null
-            destroyAllInvokers(); // Close all invokers
+            //空服务列表
+            // Forbid to access
+            this.forbidden = true;
+            // Set the method invoker map to null
+            this.methodInvokerMap = null;
+            // Close all invokers
+            destroyAllInvokers();
         } else {
             this.forbidden = false; // Allow to access
             Map<String, Invoker<T>> oldUrlInvokerMap = this.urlInvokerMap; // local reference
@@ -248,13 +295,16 @@ public class RegistryDirectory<T> extends AbstractDirectory<T> implements Notify
                 invokerUrls.addAll(this.cachedInvokerUrls);
             } else {
                 this.cachedInvokerUrls = new HashSet<URL>();
-                this.cachedInvokerUrls.addAll(invokerUrls);//Cached invoker urls, convenient for comparison
+                //Cached invoker urls, convenient for comparison， 重新缓存
+                this.cachedInvokerUrls.addAll(invokerUrls);
             }
             if (invokerUrls.isEmpty()) {
                 return;
             }
-            Map<String, Invoker<T>> newUrlInvokerMap = toInvokers(invokerUrls);// Translate url list to Invoker map
-            Map<String, List<Invoker<T>>> newMethodInvokerMap = toMethodInvokers(newUrlInvokerMap); // Change method name to map Invoker Map
+            // Translate url list to Invoker map
+            Map<String, Invoker<T>> newUrlInvokerMap = toInvokers(invokerUrls);
+            // Change method name to map Invoker Map
+            Map<String, List<Invoker<T>>> newMethodInvokerMap = toMethodInvokers(newUrlInvokerMap);
             // state change
             // If the calculation is wrong, it is not processed.
             if (newUrlInvokerMap == null || newUrlInvokerMap.size() == 0) {
@@ -335,7 +385,7 @@ public class RegistryDirectory<T> extends AbstractDirectory<T> implements Notify
 
     /**
      * Turn urls into invokers, and if url has been refer, will not re-reference.
-     *
+     * 转为URL为服务，如果已经索引，不在重新索引
      * @param urls
      * @return invokers
      */
@@ -348,6 +398,7 @@ public class RegistryDirectory<T> extends AbstractDirectory<T> implements Notify
         String queryProtocols = this.queryMap.get(Constants.PROTOCOL_KEY);
         for (URL providerUrl : urls) {
             // If protocol is configured at the reference side, only the matching protocol is selected
+            //选择匹配reference端的协议
             if (queryProtocols != null && queryProtocols.length() > 0) {
                 boolean accept = false;
                 String[] acceptProtocols = queryProtocols.split(",");
@@ -369,17 +420,21 @@ public class RegistryDirectory<T> extends AbstractDirectory<T> implements Notify
                         + ", supported protocol: " + ExtensionLoader.getExtensionLoader(Protocol.class).getSupportedExtensions()));
                 continue;
             }
+            //合并url采纳数
             URL url = mergeUrl(providerUrl);
-
-            String key = url.toFullString(); // The parameter urls are sorted
-            if (keys.contains(key)) { // Repeated url
+    // The parameter urls are sorted
+            String key = url.toFullString();
+            // Repeated url
+            if (keys.contains(key)) {
                 continue;
             }
             keys.add(key);
-            // Cache key is url that does not merge with consumer side parameters, regardless of how the consumer combines parameters, if the server url changes, then refer again
-            Map<String, Invoker<T>> localUrlInvokerMap = this.urlInvokerMap; // local reference
+            // Cache key is url that does not merge with consumer side parameters, regardless of how the consumer combines parameters,
+            // if the server url changes, then refer again
+            Map<String, Invoker<T>> localUrlInvokerMap = this.urlInvokerMap;
             Invoker<T> invoker = localUrlInvokerMap == null ? null : localUrlInvokerMap.get(key);
-            if (invoker == null) { // Not in the cache, refer again
+            if (invoker == null) {
+                // Not in the cache, refer again
                 try {
                     boolean enabled = true;
                     if (url.hasParameter(Constants.DISABLED_KEY)) {
@@ -388,6 +443,7 @@ public class RegistryDirectory<T> extends AbstractDirectory<T> implements Notify
                         enabled = url.getParameter(Constants.ENABLED_KEY, true);
                     }
                     if (enabled) {
+                        //服务代理，key point
                         invoker = new InvokerDelegate<T>(protocol.refer(serviceType, url), url, providerUrl);
                     }
                 } catch (Throwable t) {
@@ -406,27 +462,30 @@ public class RegistryDirectory<T> extends AbstractDirectory<T> implements Notify
 
     /**
      * Merge url parameters. the order is: override > -D >Consumer > Provider
-     *
+     * 合并url参数
      * @param providerUrl
      * @return
      */
     private URL mergeUrl(URL providerUrl) {
-        providerUrl = ClusterUtils.mergeUrl(providerUrl, queryMap); // Merge the consumer side parameters
-
-        List<Configurator> localConfigurators = this.configurators; // local reference
+        // Merge the consumer side parameters
+        providerUrl = ClusterUtils.mergeUrl(providerUrl, queryMap);
+        // local reference
+        List<Configurator> localConfigurators = this.configurators;
         if (localConfigurators != null && !localConfigurators.isEmpty()) {
             for (Configurator configurator : localConfigurators) {
                 providerUrl = configurator.configure(providerUrl);
             }
         }
-
-        providerUrl = providerUrl.addParameter(Constants.CHECK_KEY, String.valueOf(false)); // Do not check whether the connection is successful or not, always create Invoker!
+        // Do not check whether the connection is successful or not, always create Invoker!
+        providerUrl = providerUrl.addParameter(Constants.CHECK_KEY, String.valueOf(false));
 
         // The combination of directoryUrl and override is at the end of notify, which can't be handled here
-        this.overrideDirectoryUrl = this.overrideDirectoryUrl.addParametersIfAbsent(providerUrl.getParameters()); // Merge the provider side parameters
+        // Merge the provider side parameters
+        this.overrideDirectoryUrl = this.overrideDirectoryUrl.addParametersIfAbsent(providerUrl.getParameters());
 
         if ((providerUrl.getPath() == null || providerUrl.getPath().length() == 0)
-                && "dubbo".equals(providerUrl.getProtocol())) { // Compatible version 1.0
+                && "dubbo".equals(providerUrl.getProtocol())) {
+            // Compatible version 1.0
             //fix by tony.chenl DUBBO-44
             String path = directoryUrl.getParameter(Constants.INTERFACE_KEY);
             if (path != null) {
@@ -512,6 +571,7 @@ public class RegistryDirectory<T> extends AbstractDirectory<T> implements Notify
 
     /**
      * Close all invokers
+     * 关闭所有服务提供者
      */
     private void destroyAllInvokers() {
         Map<String, Invoker<T>> localUrlInvokerMap = this.urlInvokerMap; // local reference
@@ -531,7 +591,7 @@ public class RegistryDirectory<T> extends AbstractDirectory<T> implements Notify
     /**
      * Check whether the invoker in the cache needs to be destroyed
      * If set attribute of url: refer.autodestroy=false, the invokers will only increase without decreasing,there may be a refer leak
-     *
+     * 关闭缓存者服务者
      * @param oldUrlInvokerMap
      * @param newUrlInvokerMap
      */
@@ -582,13 +642,15 @@ public class RegistryDirectory<T> extends AbstractDirectory<T> implements Notify
                             + " use dubbo version " + Version.getVersion() + ", please check status of providers(disabled, not registered or in blacklist).");
         }
         List<Invoker<T>> invokers = null;
-        Map<String, List<Invoker<T>>> localMethodInvokerMap = this.methodInvokerMap; // local reference
+        // local reference
+        Map<String, List<Invoker<T>>> localMethodInvokerMap = this.methodInvokerMap;
         if (localMethodInvokerMap != null && localMethodInvokerMap.size() > 0) {
             String methodName = RpcUtils.getMethodName(invocation);
             Object[] args = RpcUtils.getArguments(invocation);
             if (args != null && args.length > 0 && args[0] != null
                     && (args[0] instanceof String || args[0].getClass().isEnum())) {
-                invokers = localMethodInvokerMap.get(methodName + "." + args[0]); // The routing can be enumerated according to the first parameter
+                // The routing can be enumerated according to the first parameter
+                invokers = localMethodInvokerMap.get(methodName + "." + args[0]);
             }
             if (invokers == null) {
                 invokers = localMethodInvokerMap.get(methodName);

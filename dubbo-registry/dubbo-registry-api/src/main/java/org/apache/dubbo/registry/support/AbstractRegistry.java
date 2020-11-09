@@ -68,11 +68,20 @@ public abstract class AbstractRegistry implements Registry {
     // Is it synchronized to save the file
     private final boolean syncSaveFile;
     private final AtomicLong lastCacheChanged = new AtomicLong();
+    /**
+     * 服务注册
+     */
     private final Set<URL> registered = new ConcurrentHashSet<URL>();
+    /**
+     * 订阅者
+     */
     private final ConcurrentMap<URL, Set<NotifyListener>> subscribed = new ConcurrentHashMap<URL, Set<NotifyListener>>();
+    /**
+     * 订阅者通知URL
+     */
     private final ConcurrentMap<URL, Map<String, List<URL>>> notified = new ConcurrentHashMap<URL, Map<String, List<URL>>>();
     private URL registryUrl;
-    // Local disk cache file
+    // Local disk cache file, 本地缓存文件
     private File file;
 
     public AbstractRegistry(URL url) {
@@ -190,6 +199,9 @@ public abstract class AbstractRegistry implements Registry {
         }
     }
 
+    /**
+     * 加载属性
+     */
     private void loadProperties() {
         if (file != null && file.exists()) {
             InputStream in = null;
@@ -213,6 +225,10 @@ public abstract class AbstractRegistry implements Registry {
         }
     }
 
+    /**
+     * @param url
+     * @return
+     */
     public List<URL> getCacheUrls(URL url) {
         for (Map.Entry<Object, Object> entry : properties.entrySet()) {
             String key = (String) entry.getKey();
@@ -246,7 +262,8 @@ public abstract class AbstractRegistry implements Registry {
         } else {
             final AtomicReference<List<URL>> reference = new AtomicReference<List<URL>>();
             NotifyListener listener = reference::set;
-            subscribe(url, listener); // Subscribe logic guarantees the first notify to return
+            // Subscribe logic guarantees the first notify to return
+            subscribe(url, listener);
             List<URL> urls = reference.get();
             if (urls != null && !urls.isEmpty()) {
                 for (URL u : urls) {
@@ -317,6 +334,9 @@ public abstract class AbstractRegistry implements Registry {
         }
     }
 
+    /**
+     * @throws Exception
+     */
     protected void recover() throws Exception {
         // register
         Set<URL> recoverRegistered = new HashSet<URL>(getRegistered());
@@ -343,6 +363,10 @@ public abstract class AbstractRegistry implements Registry {
         }
     }
 
+    /**
+     * 通知服务订阅者
+     * @param urls
+     */
     protected void notify(List<URL> urls) {
         if (urls == null || urls.isEmpty()) {
             return;
@@ -368,6 +392,11 @@ public abstract class AbstractRegistry implements Registry {
         }
     }
 
+    /**
+     * @param url
+     * @param listener
+     * @param urls
+     */
     protected void notify(URL url, NotifyListener listener, List<URL> urls) {
         if (url == null) {
             throw new IllegalArgumentException("notify url == null");
@@ -408,10 +437,15 @@ public abstract class AbstractRegistry implements Registry {
             List<URL> categoryList = entry.getValue();
             categoryNotified.put(category, categoryList);
             saveProperties(url);
+            //通知服务订阅者
             listener.notify(categoryList);
         }
     }
 
+    /**
+     * 保存通知URL
+     * @param url
+     */
     private void saveProperties(URL url) {
         if (file == null) {
             return;
@@ -468,6 +502,7 @@ public abstract class AbstractRegistry implements Registry {
                 URL url = entry.getKey();
                 for (NotifyListener listener : entry.getValue()) {
                     try {
+                        //取消订阅
                         unsubscribe(url, listener);
                         if (logger.isInfoEnabled()) {
                             logger.info("Destroy unsubscribe url " + url);

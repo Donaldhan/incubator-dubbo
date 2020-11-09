@@ -390,6 +390,12 @@ public class UrlUtils {
         }
     }
 
+    /**
+     * 消费和服务提供者是否匹配
+     * @param consumerUrl
+     * @param providerUrl
+     * @return
+     */
     public static boolean isMatch(URL consumerUrl, URL providerUrl) {
         String consumerInterface = consumerUrl.getServiceInterface();
         String providerInterface = providerUrl.getServiceInterface();

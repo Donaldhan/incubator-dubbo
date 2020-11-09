@@ -104,15 +104,19 @@ public class DubboRegistryFactory extends AbstractRegistryFactory {
                 urls.add(url.setAddress(address));
             }
         }
-        //构造注册目录（服务） TODO
+        //构造注册目录（服务）
         RegistryDirectory<RegistryService> directory = new RegistryDirectory<RegistryService>(RegistryService.class, url.addParameter(Constants.INTERFACE_KEY, RegistryService.class.getName()).addParameterAndEncoded(Constants.REFER_KEY, url.toParameterString()));
-        //
+        //合并服务
         Invoker<RegistryService> registryInvoker = cluster.join(directory);
+        //JavassistProxyFactory ，获取代理服务
         RegistryService registryService = proxyFactory.getProxy(registryInvoker);
+        //创建dubbo注册器
         DubboRegistry registry = new DubboRegistry(registryInvoker, registryService);
         directory.setRegistry(registry);
         directory.setProtocol(protocol);
+        //通知URL，服务提供者
         directory.notify(urls);
+        //订阅服务
         directory.subscribe(new URL(Constants.CONSUMER_PROTOCOL, NetUtils.getLocalHost(), 0, RegistryService.class.getName(), url.getParameters()));
         return registry;
     }

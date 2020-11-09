@@ -387,6 +387,10 @@ public /**final**/ class URL implements Serializable {
         return address.toString();
     }
 
+    /**
+     * 获取backup URL
+     * @return
+     */
     public List<URL> getBackupUrls() {
         List<URL> urls = new ArrayList<URL>();
         urls.add(this);

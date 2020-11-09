@@ -38,7 +38,7 @@ import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * A {@link Timer} optimized for approximated I/O timeout scheduling.
- *
+ * 近似估计IO超时调度优化定时钟
  * <h3>Tick Duration</h3>
  * <p>
  * As described with 'approximated', this timer does not execute the scheduled

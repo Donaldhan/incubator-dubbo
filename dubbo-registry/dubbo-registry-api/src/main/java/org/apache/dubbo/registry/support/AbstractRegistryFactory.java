@@ -107,6 +107,10 @@ public abstract class AbstractRegistryFactory implements RegistryFactory {
         }
     }
 
+    /**
+     * @param url
+     * @return
+     */
     protected abstract Registry createRegistry(URL url);
 
 }

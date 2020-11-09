@@ -81,7 +81,7 @@ public class ClusterUtils {
             map.putAll(localMap);
         }
         if (remoteMap != null && remoteMap.size() > 0) {
-            // Use version passed from provider side
+            // Use version passed from provider side 使用服务端的dubbo版本
             String dubbo = remoteMap.get(Constants.DUBBO_VERSION_KEY);
             if (dubbo != null && dubbo.length() > 0) {
                 map.put(Constants.DUBBO_VERSION_KEY, dubbo);
