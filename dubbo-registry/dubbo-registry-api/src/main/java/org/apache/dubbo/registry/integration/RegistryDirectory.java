@@ -443,7 +443,7 @@ public class RegistryDirectory<T> extends AbstractDirectory<T> implements Notify
                         enabled = url.getParameter(Constants.ENABLED_KEY, true);
                     }
                     if (enabled) {
-                        //服务代理，key point
+                        //服务代理，key point, org.apache.dubbo.rpc.protocol.dubbo.DubboProtocol.refer
                         invoker = new InvokerDelegate<T>(protocol.refer(serviceType, url), url, providerUrl);
                     }
                 } catch (Throwable t) {
