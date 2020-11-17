@@ -581,7 +581,7 @@ public class ServiceConfig<T> extends AbstractServiceConfig {
                         //创建代理Invoke JavassistProxyFactory
                         Invoker<?> invoker = proxyFactory.getInvoker(ref, (Class) interfaceClass, registryURL.addParameterAndEncoded(Constants.EXPORT_KEY, url.toFullString()));
                         DelegateProviderMetaDataInvoker wrapperInvoker = new DelegateProviderMetaDataInvoker(invoker, this);
-                        //ProtocolFilterWrapper ,ZookeeperRegistry ,RestProtocol，RmiProtocol，DubboProtocol
+                        //ProtocolFilterWrapper ,ZookeeperRegistry ，，DubboProtocol，RegistryProtocol
                         Exporter<?> exporter = protocol.export(wrapperInvoker);
                         exporters.add(exporter);
                     }
