@@ -112,6 +112,11 @@ public class DefaultFuture implements ResponseFuture {
         return CHANNELS.containsValue(channel);
     }
 
+    /**
+     * 发送请求数据，服务调用
+     * @param channel
+     * @param request
+     */
     public static void sent(Channel channel, Request request) {
         DefaultFuture future = FUTURES.get(request.getId());
         if (future != null) {
@@ -142,6 +147,10 @@ public class DefaultFuture implements ResponseFuture {
         }
     }
 
+    /**
+     * @param channel
+     * @param response
+     */
     public static void received(Channel channel, Response response) {
         try {
             DefaultFuture future = FUTURES.remove(response.getId());
@@ -226,6 +235,9 @@ public class DefaultFuture implements ResponseFuture {
         }
     }
 
+    /**
+     * 超时检查任务
+     */
     private static class TimeoutCheckTask implements TimerTask {
 
         private DefaultFuture future;
@@ -322,10 +334,16 @@ public class DefaultFuture implements ResponseFuture {
         return start;
     }
 
+    /**
+     *
+     */
     private void doSent() {
         sent = System.currentTimeMillis();
     }
 
+    /**
+     * @param res
+     */
     private void doReceived(Response res) {
         lock.lock();
         try {

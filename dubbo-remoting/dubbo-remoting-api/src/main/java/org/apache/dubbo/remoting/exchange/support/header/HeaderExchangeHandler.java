@@ -99,7 +99,7 @@ public class HeaderExchangeHandler implements ChannelHandlerDelegate {
         // find handler by message class.
         Object msg = req.getData();
         try {
-            // handle data.
+            // handle data. 处理请求
             CompletableFuture<Object> future = handler.reply(channel, msg);
             if (future.isDone()) {
                 res.setStatus(Response.OK);
@@ -171,6 +171,7 @@ public class HeaderExchangeHandler implements ChannelHandlerDelegate {
         }
         if (message instanceof Request) {
             Request request = (Request) message;
+            //发送请求
             DefaultFuture.sent(channel, request);
         }
         if (exception != null) {
