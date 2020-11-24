@@ -213,6 +213,12 @@ public class ExchangeCodec extends TelnetCodec {
         return req.getData();
     }
 
+    /**
+     * @param channel
+     * @param buffer
+     * @param req
+     * @throws IOException
+     */
     protected void encodeRequest(Channel channel, ChannelBuffer buffer, Request req) throws IOException {
         Serialization serialization = getSerialization(channel);
         // header.
@@ -259,6 +265,12 @@ public class ExchangeCodec extends TelnetCodec {
         buffer.writerIndex(savedWriteIndex + HEADER_LENGTH + len);
     }
 
+    /**
+     * @param channel
+     * @param buffer
+     * @param res
+     * @throws IOException
+     */
     protected void encodeResponse(Channel channel, ChannelBuffer buffer, Response res) throws IOException {
         int savedWriteIndex = buffer.writerIndex();
         try {
