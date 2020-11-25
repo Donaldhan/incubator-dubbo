@@ -92,7 +92,7 @@ public class DubboCodec extends ExchangeCodec implements Codec2 {
                         //事件
                         data = decodeEventData(channel, in);
                     } else {
-                        //解码RPC调用
+                        //解码RPC调用结果
                         DecodeableRpcResult result;
                         //IO线程
                         if (channel.getUrl().getParameter(
@@ -136,6 +136,7 @@ public class DubboCodec extends ExchangeCodec implements Codec2 {
                 } else if (req.isEvent()) {
                     data = decodeEventData(channel, in);
                 } else {
+                    //解码RPC 调用
                     DecodeableRpcInvocation inv;
                     if (channel.getUrl().getParameter(
                             Constants.DECODE_IN_IO_THREAD_KEY,

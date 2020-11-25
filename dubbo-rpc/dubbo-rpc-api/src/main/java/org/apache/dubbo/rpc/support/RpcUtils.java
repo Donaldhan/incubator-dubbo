@@ -65,7 +65,11 @@ public class RpcUtils {
         return null;
     }
 
-    // TODO why not get return type when initialize Invocation?
+    /**
+     * TODO why not get return type when initialize Invocation?
+     * @param invocation
+     * @return
+     */
     public static Type[] getReturnTypes(Invocation invocation) {
         try {
             if (invocation != null && invocation.getInvoker() != null
